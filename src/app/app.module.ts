@@ -10,6 +10,7 @@ import NavbarComponent from './components/navbar/navbar';
 import FooterComponent from './components/footer/footer';
 import HomeComponent from './components/home/home';
 import AboutComponent from './components/about/about';
+import WanderLandComponent from './components/home/wander-land';
 import {WanderService} from './services/wander-service';
 
 @NgModule({
@@ -18,7 +19,8 @@ import {WanderService} from './services/wander-service';
     NavbarComponent,
     FooterComponent,
     HomeComponent,
-    AboutComponent
+    AboutComponent,
+    WanderLandComponent
   ],
   imports: [
     BrowserModule,
