@@ -18,10 +18,40 @@ export default class WanderLandComponent {
   static wanderLandInitialized = false;
 
   constructor() {
-    if (!WanderLandComponent.wanderLandInitialized ) {
-      WanderLandComponent.wanderLandInitialized = true;
-      initWanderLand();
-    }
+    //if (!WanderLandComponent.wanderLandInitialized ) {
+    //  WanderLandComponent.wanderLandInitialized = true;
+    //  initWanderLand();
+    //}
+    this.initSetup();
+  }
+
+  private initSetup(): void {
+    //if (!WanderLandComponent.wanderLandInitialized ) {
+      this.setupDelayed().then( () => {
+        WanderLandComponent.wanderLandInitialized = true;
+        initWanderLand();
+      } );
+    //}
+  }
+
+  private setupDelayed(): Promise<void> {
+    return new Promise<void> (
+      ( resolve: () => void,
+        reject: () => void ) =>
+        {
+          function afterWait() {
+            var showElement = document.getElementById("wander-land-show");
+            if (showElement == null) {
+              setTimeout(afterWait, 200);
+              console.log("waiting showElement ....");
+            } else {
+              console.log("call resolve");
+              resolve();
+            }
+          }
+          afterWait();
+        }
+      );
   }
 }
 
@@ -32,7 +62,7 @@ function initWanderLand(): any {
    var renderer = new THREE.WebGLRenderer();
    renderer.setSize( window.innerWidth/2, window.innerHeight/2 );
    //document.body.appendChild( renderer.domElement );
-   document.getElementById("wander-land-show-1").appendChild(renderer.domElement);
+   document.getElementById("wander-land-show").appendChild(renderer.domElement);
 
    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
