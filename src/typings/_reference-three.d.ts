@@ -1,0 +1,7 @@
+/*
+/// <reference path="three-local.d.ts" />
+*/
+
+/// <reference path="three-selbyk.d.ts" />
+
+// /// <reference path="../../node_modules/@types/three/index.d.ts" />
