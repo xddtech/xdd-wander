@@ -1,8 +1,10 @@
 // /// <reference path="../../../../node_modules/@types/three/index.d.ts" />
 // /// <reference path="../../../typings/three-local.d.ts" />
 /// <reference path="../../../typings/_reference-three.d.ts" />
+/// <reference path="../../../typings/_reference-jquery.d.ts" />
 
-import {Component} from '@angular/core';
+import {Component, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+declare var $: JQueryStatic;
 
 const wanderLandShowElemntId = "wander-land-show";
 function getShowElement(): Element {
@@ -13,11 +15,26 @@ function getShowElement(): Element {
   selector: 'wander-land',
   templateUrl: 'wander-land.html'
 })
-export default class WanderLandComponent {
+export default class WanderLandComponent implements AfterViewInit {
   static wanderLandRenderer: THREE.WebGLRenderer;
   wanderLandShowElemnt: any;
+  @ViewChild('selectElem') el: ElementRef;
 
   constructor() {
+    //this.initSetup();
+  }
+
+  ngAfterViewInit() {
+    /*
+    $(this.el.nativeElement)
+    .chosen()
+    .on('change', (e, args) => {
+      this.selectedValue = args.selected;
+    });
+    */
+    if (getShowElement() != null) {
+      console.log("get showElement inside ngAfterViewInit");
+    }
     this.initSetup();
   }
 

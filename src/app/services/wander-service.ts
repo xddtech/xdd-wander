@@ -27,5 +27,5 @@ export class WanderService {
 }
 
 var descriptions = {
-    "about": "Fun with Angular and Three.js"
+    "about": "Fun with Angular, Three.js and Typescript"
 };
