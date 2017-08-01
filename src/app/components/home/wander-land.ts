@@ -1,72 +1,89 @@
-/*
-/// <reference path="../../../../node_modules/@types/three/index.d.ts" />
-*/
-/*
-/// <reference path="../../../typings/three-local.d.ts" />
-*/
-
+// /// <reference path="../../../../node_modules/@types/three/index.d.ts" />
+// /// <reference path="../../../typings/three-local.d.ts" />
 /// <reference path="../../../typings/_reference-three.d.ts" />
-//import * as THREE from "../../../../node_modules/@types/three/index.d";
 
 import {Component} from '@angular/core';
+
+const wanderLandShowElemntId = "wander-land-show";
+function getShowElement(): Element {
+  return document.getElementById(wanderLandShowElemntId);
+}
 
 @Component({
   selector: 'wander-land',
   templateUrl: 'wander-land.html'
 })
 export default class WanderLandComponent {
-  static wanderLandInitialized = false;
+  static wanderLandRenderer: THREE.WebGLRenderer;
+  wanderLandShowElemnt: any;
 
   constructor() {
-    //if (!WanderLandComponent.wanderLandInitialized ) {
-    //  WanderLandComponent.wanderLandInitialized = true;
-    //  initWanderLand();
-    //}
     this.initSetup();
   }
 
   private initSetup(): void {
-    //if (!WanderLandComponent.wanderLandInitialized ) {
-      this.setupDelayed().then( () => {
-        WanderLandComponent.wanderLandInitialized = true;
-        initWanderLand();
-      } );
-    //}
+    this.showElementReady().then( () => {
+      if (WanderLandComponent.wanderLandRenderer == null) {
+        WanderLandComponent.wanderLandRenderer = initWanderLandShow();
+      } else {
+        getShowElement().appendChild(WanderLandComponent.wanderLandRenderer.domElement);
+        console.log("load the existing show renderer");
+      }
+    } ).catch(
+      () => {
+        console.error("failed to get the show element");
+      }
+    );
   }
 
-  private setupDelayed(): Promise<void> {
+  private showElementReady(): Promise<void> {
     return new Promise<void> (
-      ( resolve: () => void,
-        reject: () => void ) =>
-        {
-          function afterWait() {
-            var showElement = document.getElementById("wander-land-show");
-            if (showElement == null) {
-              setTimeout(afterWait, 200);
-              console.log("waiting showElement ....");
-            } else {
-              console.log("call resolve");
-              resolve();
+      (resolve: () => void, reject: () => void ) => {
+        var checkTimes = 0;
+        function checkShowElement() {
+          if (getShowElement() == null) {
+            checkTimes++;
+            if (checkTimes > 10) {
+              reject();
             }
+            setTimeout(checkShowElement, 200);
+            console.log("checking showElement: " + checkTimes + "...");
+          } else {
+            console.log("showElement ready");
+            resolve();
           }
-          afterWait();
         }
-      );
+        checkShowElement();
+      }
+    );
   }
 }
 
-function initWanderLand(): any {
+function resizeWindow() {
+  resizeShowWindow(WanderLandComponent.wanderLandRenderer);
+}
+
+function resizeShowWindow(renderer: THREE.WebGLRenderer) {
+  if (renderer == null) {
+    return;
+  }
+  var width = window.innerWidth * 0.9;
+  var height = window.innerHeight * 0.7;
+  renderer.setSize(width, height);
+}
+
+function initWanderLandShow(): THREE.WebGLRenderer {
    var scene = new THREE.Scene();
-   var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+   var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
    var renderer = new THREE.WebGLRenderer();
-   renderer.setSize( window.innerWidth/2, window.innerHeight/2 );
-   //document.body.appendChild( renderer.domElement );
-   document.getElementById("wander-land-show").appendChild(renderer.domElement);
+   resizeShowWindow(renderer);
+   getShowElement().appendChild(renderer.domElement);
+   window.addEventListener("resize", resizeWindow);
 
-   var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+   var geometry = new THREE.BoxGeometry(1, 1, 1);
    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-   var cube = new THREE.Mesh( geometry, material );
+   var cube = new THREE.Mesh(geometry, material);
    scene.add( cube );
 
    camera.position.z = 5;
@@ -85,4 +102,5 @@ function initWanderLand(): any {
    };
 
    animate();
+   return renderer;
 }

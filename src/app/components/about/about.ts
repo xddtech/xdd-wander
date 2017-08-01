@@ -6,21 +6,18 @@ import {NamedDescription, WanderService} from '../../services/wander-service';
 @Component({
   selector: 'about-page',
   providers: [WanderService],
-  template: `
-    <div class="row text-center">
-      {{aboutDescription}}
-    </div>
-    <div class="row">
-      {{mainText}}
-    </div>
-  `
+  templateUrl: 'about.html'
 })
 export default class AboutComponent {
   aboutDescription: string;
-  mainText: Observable<string>;
+  //mainText: Observable<string>;
+  mainText: string;
 
   constructor(private wanderService: WanderService) {
     this.aboutDescription = this.wanderService.getAboutDescription().text;
-    this.mainText = this.wanderService.getMainText();
+    //this.mainText = this.wanderService.getMainText();
+    this.wanderService.getMainText().subscribe(data => {
+      this.mainText = data;
+    });
   }
 }
