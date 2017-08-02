@@ -14,7 +14,7 @@ export class NamedDescription {
 @Injectable()
 export class WanderService {
 
-  navbarElement: ElementRef;
+  static navbarElement: ElementRef;
 
   constructor(private http: Http) {}
 
@@ -28,10 +28,10 @@ export class WanderService {
   }
 
   getNavbarHeight(): number {
-    if(this.navbarElement == null) {
+    if(WanderService.navbarElement == null) {
       return 0;
     }
-    return this.navbarElement.nativeElement.offsetHeight;
+    return WanderService.navbarElement.nativeElement.offsetHeight;
   }
 }
 

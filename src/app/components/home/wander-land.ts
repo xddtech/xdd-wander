@@ -16,6 +16,7 @@ function getShowElement(): Element {
 @Component({
   selector: 'wander-land',
   templateUrl: 'wander-land.html',
+  styleUrls: ['./wander-land.css'],
   providers: [WanderService]
 })
 export default class WanderLandComponent implements AfterViewInit {
@@ -91,8 +92,8 @@ function resizeShowWindow(renderer: THREE.WebGLRenderer) {
   }
   var width = window.innerWidth;
   var navbarHeight =  WanderLandComponent.wanderServiceRef.getNavbarHeight();
-  console.log("navbarHeight=" + navbarHeight);
   var height = window.innerHeight - navbarHeight;
+  console.log("width=" + width + ", height=" + height + ", navbarHeight=" + navbarHeight);
   renderer.setSize(width, height);
 }
 

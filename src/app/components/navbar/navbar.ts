@@ -14,6 +14,6 @@ export default class NavbarComponent implements AfterViewInit {
   constructor(private wanderService: WanderService) {}
 
   ngAfterViewInit() {
-    this.wanderService.navbarElement = this.navbarElement;
+    WanderService.navbarElement = this.navbarElement;
   }
 }
