@@ -4,6 +4,8 @@
 /// <reference path="../../../typings/_reference-jquery.d.ts" />
 
 import {Component, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {WanderService} from '../../services/wander-service';
+
 declare var $: JQueryStatic;
 
 const wanderLandShowElemntId = "wander-land-show";
@@ -13,14 +15,17 @@ function getShowElement(): Element {
 
 @Component({
   selector: 'wander-land',
-  templateUrl: 'wander-land.html'
+  templateUrl: 'wander-land.html',
+  providers: [WanderService]
 })
 export default class WanderLandComponent implements AfterViewInit {
   static wanderLandRenderer: THREE.WebGLRenderer;
+  static wanderServiceRef: WanderService;
   wanderLandShowElemnt: any;
   @ViewChild('selectElem') el: ElementRef;
 
-  constructor() {
+  constructor(private wanderService: WanderService) {
+    WanderLandComponent.wanderServiceRef = wanderService;
     //this.initSetup();
   }
 
@@ -84,8 +89,10 @@ function resizeShowWindow(renderer: THREE.WebGLRenderer) {
   if (renderer == null) {
     return;
   }
-  var width = window.innerWidth * 0.9;
-  var height = window.innerHeight * 0.7;
+  var width = window.innerWidth;
+  var navbarHeight =  WanderLandComponent.wanderServiceRef.getNavbarHeight();
+  console.log("navbarHeight=" + navbarHeight);
+  var height = window.innerHeight - navbarHeight;
   renderer.setSize(width, height);
 }
 

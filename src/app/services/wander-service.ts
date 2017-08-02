@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, ElementRef} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 
@@ -14,6 +14,8 @@ export class NamedDescription {
 @Injectable()
 export class WanderService {
 
+  navbarElement: ElementRef;
+
   constructor(private http: Http) {}
 
   getAboutDescription(): NamedDescription {
@@ -23,6 +25,13 @@ export class WanderService {
   getMainText(): Observable<string> {
     return this.http.get('/index.html')
       .map(response => response.text());
+  }
+
+  getNavbarHeight(): number {
+    if(this.navbarElement == null) {
+      return 0;
+    }
+    return this.navbarElement.nativeElement.offsetHeight;
   }
 }
 
