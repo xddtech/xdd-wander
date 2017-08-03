@@ -3,7 +3,7 @@
 /// <reference path="../../../typings/_reference-three.d.ts" />
 /// <reference path="../../../typings/_reference-jquery.d.ts" />
 
-import {Component, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import {WanderService} from '../../services/wander-service';
 
 declare var $: JQueryStatic;
@@ -19,7 +19,7 @@ function getShowElement(): Element {
   styleUrls: ['./wander-land.css'],
   providers: [WanderService]
 })
-export default class WanderLandComponent implements AfterViewInit {
+export default class WanderLandComponent implements AfterViewInit, OnDestroy {
   static wanderLandRenderer: THREE.WebGLRenderer;
   static wanderServiceRef: WanderService;
   wanderLandShowElemnt: any;
@@ -27,21 +27,20 @@ export default class WanderLandComponent implements AfterViewInit {
 
   constructor(private wanderService: WanderService) {
     WanderLandComponent.wanderServiceRef = wanderService;
-    //this.initSetup();
   }
 
   ngAfterViewInit() {
-    /*
-    $(this.el.nativeElement)
-    .chosen()
-    .on('change', (e, args) => {
-      this.selectedValue = args.selected;
-    });
-    */
+    // hide scrollbar
+    $("body").css("overflow", "hidden");
     if (getShowElement() != null) {
       console.log("get showElement inside ngAfterViewInit");
     }
     this.initSetup();
+  }
+
+  ngOnDestroy() {
+    // show scrollbar for other routes
+    $("body").css("overflow", "auto");
   }
 
   private initSetup(): void {
@@ -90,10 +89,13 @@ function resizeShowWindow(renderer: THREE.WebGLRenderer) {
   if (renderer == null) {
     return;
   }
-  var width = window.innerWidth;
+  //var width = window.innerWidth;
+  var width = $(document).innerWidth();
+
   var navbarHeight =  WanderLandComponent.wanderServiceRef.getNavbarHeight();
   var height = window.innerHeight - navbarHeight;
   console.log("width=" + width + ", height=" + height + ", navbarHeight=" + navbarHeight);
+
   renderer.setSize(width, height);
 }
 
