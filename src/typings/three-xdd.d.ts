@@ -3,15 +3,7 @@
 // Definitions by: Kon <http://phyzkit.net/>, Satoru Kimura <https://github.com/gyohk>, Florent Poujol <https://github.com/florentpoujol>, SereznoKot <https://github.com/SereznoKot>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/* changed 
-declare namespace THREE_
-
-declare module 'three_' {
-    export = THREE_;
-}
-*/
-
-declare namespace THREE_ {
+declare namespace THREE {
     export const REVISION: string;
 
     // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent.button
@@ -4795,6 +4787,11 @@ declare namespace THREE_ {
      */
     export class WebGLRenderer implements Renderer {
         /**
+         * XDD
+         */
+        setClearColorHex(): void;
+
+        /**
          * parameters is an optional object with properties defining the renderer's behaviour. The constructor also accepts no parameters at all. In all cases, it will assume sane defaults when parameters are missing.
          */
         constructor(parameters?: WebGLRendererParameters);
@@ -6743,6 +6740,6 @@ declare namespace THREE_ {
     }
 }
 
-declare module 'three_' {
-    export = THREE_;
+declare module 'three' {
+    export = THREE;
 }

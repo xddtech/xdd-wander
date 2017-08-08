@@ -5,6 +5,7 @@
 
 import {Component, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angular/core';
 import {WanderService} from '../../services/wander-service';
+import {SleepingBearShow} from '../sleeping-bear/sleeping-bear-show';
 
 declare var $: JQueryStatic;
 
@@ -35,12 +36,29 @@ export default class WanderLandComponent implements AfterViewInit, OnDestroy {
     if (getShowElement() != null) {
       console.log("get showElement inside ngAfterViewInit");
     }
-    this.initSetup();
+    //this.initSetup();
+    this.initSleepingBear();
   }
 
   ngOnDestroy() {
     // show scrollbar for other routes
     $("body").css("overflow", "auto");
+  }
+
+  private initSleepingBear(): void {
+    this.showElementReady().then( () => {
+      if (SleepingBearShow.appRender == null) {
+        var sleepingBearShow = new SleepingBearShow(this.wanderService);
+        sleepingBearShow.create(getShowElement());
+      } else {
+        getShowElement().appendChild(SleepingBearShow.appRender.domElement);
+        console.log("load the existing show renderer");
+      }
+    } ).catch(
+      (error) => {
+        console.error("failed to init sleeping bear: " + error);
+      }
+    );
   }
 
   private initSetup(): void {
