@@ -24,14 +24,16 @@ export class SleepingBearShow {
     var near = 0.1;
     var far = 1000;
     SleepingBearShow.appCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    //SleepingBearShow.appCamera.position.z = 5;
-    SleepingBearShow.appCamera.position.x = -30;
-    SleepingBearShow.appCamera.position.y = 40;
-    SleepingBearShow.appCamera.position.z = 30;
-    SleepingBearShow.appCamera.lookAt(SleepingBearShow.appScene.position);
+    var camera = SleepingBearShow.appCamera;
+    //SleepingBearShow.appCamera.position.x = -30;
+    //SleepingBearShow.appCamera.position.y = 40;
+    //SleepingBearShow.appCamera.position.z = 30;
+    camera.position.x = 0;
+    camera.position.y = 30;
+    camera.position.z = 100;
+    camera.lookAt(SleepingBearShow.appScene.position);
     
     SleepingBearShow.appRender = new THREE.WebGLRenderer();
-    //SleepingBearShow.appRender.setClearColorHex();
     SleepingBearShow.appRender.setClearColor(new THREE.Color(0xEEEEEE));
     SleepingBearShow_onWindowResize();
     showElement.appendChild(SleepingBearShow.appRender.domElement);
@@ -40,14 +42,18 @@ export class SleepingBearShow {
 
     this.addShowObjects();
 
-    //SleepingBearShow.appRender.render(SleepingBearShow.appScene, SleepingBearShow.appCamera);
+    SleepingBearShow_animate();
   }
 
   addShowObjects(): void {
-   var geometry = new THREE.BoxGeometry(1, 1, 1);
-   var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-   var cube = new THREE.Mesh(geometry, material);
-   SleepingBearShow.appScene.add( cube );
+    /*
+    var geometry = new THREE.BoxGeometry(1, 1, 1);
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    var cube = new THREE.Mesh(geometry, material);
+    SleepingBearShow.appScene.add( cube );
+    */
+    var axisHelper = new THREE.AxisHelper(200);
+    SleepingBearShow.appScene.add(axisHelper);
 
     var lakeMichigan = new LakeMichigan(SleepingBearShow.wanderServiceRef);
     lakeMichigan.create(SleepingBearShow.appScene);
@@ -78,5 +84,3 @@ function SleepingBearShow_onWindowResize() {
    var height = window.innerHeight - navbarHeight;
    SleepingBearShow.appRender.setSize(window.innerWidth, height);
 }
-
-SleepingBearShow_animate();
