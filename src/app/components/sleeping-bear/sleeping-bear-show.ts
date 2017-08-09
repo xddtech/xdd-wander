@@ -3,6 +3,7 @@
 
 import {WanderService} from '../../services/wander-service';
 import {LakeMichigan} from './lake-michigan';
+import {SandDune} from './sand-dune';
 
 declare var $: JQueryStatic;
 
@@ -11,6 +12,8 @@ export class SleepingBearShow {
   static appCamera: THREE.PerspectiveCamera;
   static appRender: THREE.WebGLRenderer;
   static wanderServiceRef: WanderService;
+  static lakeMichigan: LakeMichigan;
+  static showClock = new THREE.Clock();
 
   constructor(private wanderService: WanderService) {
     SleepingBearShow.wanderServiceRef = wanderService;
@@ -25,9 +28,6 @@ export class SleepingBearShow {
     var far = 1000;
     SleepingBearShow.appCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     var camera = SleepingBearShow.appCamera;
-    //SleepingBearShow.appCamera.position.x = -30;
-    //SleepingBearShow.appCamera.position.y = 40;
-    //SleepingBearShow.appCamera.position.z = 30;
     camera.position.x = 0;
     camera.position.y = 30;
     camera.position.z = 100;
@@ -55,8 +55,11 @@ export class SleepingBearShow {
     var axisHelper = new THREE.AxisHelper(200);
     SleepingBearShow.appScene.add(axisHelper);
 
-    var lakeMichigan = new LakeMichigan(SleepingBearShow.wanderServiceRef);
-    lakeMichigan.create(SleepingBearShow.appScene);
+    SleepingBearShow.lakeMichigan = new LakeMichigan(SleepingBearShow.wanderServiceRef);
+    SleepingBearShow.lakeMichigan.create(SleepingBearShow.appScene);
+
+    var sandDune = new SandDune(SleepingBearShow.wanderServiceRef);
+    sandDune.create(SleepingBearShow.appScene);
   }
 
   getCameraAspect(): number {
@@ -68,6 +71,12 @@ export class SleepingBearShow {
 
 var SleepingBearShow_animate = function() {
   requestAnimationFrame( SleepingBearShow_animate );
+
+  var deltaTime = SleepingBearShow.showClock.getDelta(),
+      elapsedTime = SleepingBearShow.showClock.getElapsedTime() * 10;
+      
+  SleepingBearShow.lakeMichigan.animate(deltaTime, elapsedTime);
+
   if (SleepingBearShow.appRender != null) {
     try {
       SleepingBearShow.appRender.render(SleepingBearShow.appScene, SleepingBearShow.appCamera);

@@ -8,39 +8,41 @@ declare var $: JQueryStatic;
 
 export class LakeMichigan {
 
+  lakeGeometry: THREE.PlaneGeometry;
+
   constructor(private wanderService: WanderService) {
   }
 
   create(appScene: THREE.Scene) : void {
-    /*
-    var planeGeometry = new THREE.PlaneGeometry(60, 20);
-    var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
-    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    var width = 100;
+    var length = 100;
+    var widthSegments = 50;
+    var lengthSegments = 50;
+    this.lakeGeometry = new THREE.PlaneGeometry(width, length, widthSegments, lengthSegments);
+    
+    for ( var i = 0, l = this.lakeGeometry.vertices.length; i < l; i ++ ) {
+			//this.lakeGeometry.vertices[ i ].y = 35 * Math.sin( i / 2 );
+		}
 
-    // rotate and position the plane
-    plane.rotation.x = -0.5 * Math.PI;
-    plane.position.x = 15;
-    plane.position.y = 0;
-    plane.position.z = 0;
-
-    // add the plane to the scene
-    appScene.add(plane);
-    */
-
-    var ground = new THREE.PlaneGeometry(100, 100, 50, 50);
     var meshParams = {
       wireframe: true,
       overdraw: 1,
       color: '000000'
     };
-    var groundMesh = THREE.SceneUtils.createMultiMaterialObject(ground,
-            //[new THREE.MeshBasicMaterial({wireframe: true, overdraw: true, color: 000000}),
-              [new THREE.MeshBasicMaterial(<THREE.MeshBasicMaterialParameters>meshParams),
-                 new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.5}
-                )
-            ]);
-    groundMesh.rotation.x = -0.5 * Math.PI;
-    appScene.add(groundMesh);
+    var lakeMesh = THREE.SceneUtils.createMultiMaterialObject(this.lakeGeometry,
+          [new THREE.MeshBasicMaterial(<THREE.MeshBasicMaterialParameters>meshParams),
+               new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.5}
+              )
+          ]);
+    lakeMesh.rotation.x = -0.5 * Math.PI;
+    lakeMesh.position.z = length / 2;
+    appScene.add(lakeMesh);
+  }
 
+  animate(deltaTime: number, elapsedTime: number): void {
+    for ( var i = 0, l = this.lakeGeometry.vertices.length; i < l; i ++ ) {
+      this.lakeGeometry.vertices[ i ].y = 35 * Math.sin( i / 5 + (elapsedTime + i ) / 7 );
+    }
+    this.lakeGeometry.verticesNeedUpdate = true;
   }
 }
