@@ -14,6 +14,8 @@ export class SleepingBearShow {
   static wanderServiceRef: WanderService;
   static lakeMichigan: LakeMichigan;
   static showClock = new THREE.Clock();
+  static appCamControl: THREE.FirstPersonControls;
+  static trackballControl: THREE.TrackballControls;
 
   constructor(private wanderService: WanderService) {
     SleepingBearShow.wanderServiceRef = wanderService;
@@ -32,6 +34,28 @@ export class SleepingBearShow {
     camera.position.y = 30;
     camera.position.z = 100;
     camera.lookAt(SleepingBearShow.appScene.position);
+    /*
+    var camControls = new THREE.FirstPersonControls(camera, document);
+        camControls.lookSpeed = 0.4;
+        camControls.movementSpeed = 20;
+        camControls.noFly = true;
+        camControls.lookVertical = true;
+        camControls.constrainVertical = true;
+        camControls.verticalMin = 1.0;
+        camControls.verticalMax = 2.0;
+        camControls.lon = -150;
+        camControls.lat = 120;
+    SleepingBearShow.appCamControl = camControls;
+    */
+    var trackballControls = new THREE.TrackballControls(camera, document);
+        trackballControls.rotateSpeed = 1.0;
+        trackballControls.zoomSpeed = 1.0;
+        trackballControls.panSpeed = 1.0;
+        //trackballControls.noZoom=false;
+        //trackballControls.noPan=false;
+        trackballControls.staticMoving = true;
+        //trackballControls.dynamicDampingFactor=0.3;
+    SleepingBearShow.trackballControl = trackballControls;
     
     SleepingBearShow.appRender = new THREE.WebGLRenderer();
     SleepingBearShow.appRender.setClearColor(new THREE.Color(0xEEEEEE));
@@ -75,11 +99,13 @@ var SleepingBearShow_animate = function() {
   var deltaTime = SleepingBearShow.showClock.getDelta(),
       elapsedTime = SleepingBearShow.showClock.getElapsedTime() * 10;
       
-  SleepingBearShow.lakeMichigan.animate(deltaTime, elapsedTime);
+  //SleepingBearShow.lakeMichigan.animate(deltaTime, elapsedTime);
 
   if (SleepingBearShow.appRender != null) {
     try {
       SleepingBearShow.appRender.render(SleepingBearShow.appScene, SleepingBearShow.appCamera);
+      //SleepingBearShow.appCamControl.update(deltaTime);
+      SleepingBearShow.trackballControl.update();
     } catch(error) {
       console.error("render error " + error);
     }

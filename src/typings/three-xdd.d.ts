@@ -6738,6 +6738,38 @@ declare namespace THREE {
         stopAnimation(name: string): void;
         update(delta: number): void;
     }
+
+    //XDD
+    export class FirstPersonControls {
+        lookSpeed: number;
+        movementSpeed: number;
+        noFly: boolean;
+        lookVertical: boolean;
+        constrainVertical: boolean;
+        verticalMin: number;
+        verticalMax: number;
+        lon: number;
+        lat: number;
+
+        update(delta: number): void;
+
+        constructor(camera: any, dom: any);
+    }
+
+    //XDD
+    export class TrackballControls {
+        constructor(camera: any, dom: any);
+
+        rotateSpeed: number;
+        zoomSpeed: number;
+        panSpeed: number;
+        noZoom: boolean;
+        noPan: boolean;
+        staticMoving: boolean;
+        dynamicDampingFactor: number;
+
+        update(): void;
+    }
 }
 
 declare module 'three' {
