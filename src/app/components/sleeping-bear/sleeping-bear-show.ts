@@ -57,7 +57,7 @@ export class SleepingBearShow {
         //trackballControls.dynamicDampingFactor=0.3;
     SleepingBearShow.trackballControl = trackballControls;
     
-    SleepingBearShow.appRender = new THREE.WebGLRenderer();
+    SleepingBearShow.appRender = new THREE.WebGLRenderer({ antialias: true });
     SleepingBearShow.appRender.setClearColor(new THREE.Color(0xEEEEEE));
     SleepingBearShow_onWindowResize();
     showElement.appendChild(SleepingBearShow.appRender.domElement);
@@ -84,6 +84,20 @@ export class SleepingBearShow {
 
     var sandDune = new SandDune(SleepingBearShow.wanderServiceRef);
     sandDune.create(SleepingBearShow.appScene);
+
+    var loader = new THREE.TextureLoader();
+    var groundTexture = loader.load("assets/textures/lake-water.jpg");
+    //var groundTexture = loader.load("lake-water.jpg");
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set( 25, 25 );
+    groundTexture.anisotropy = 16;
+    var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: groundTexture } );
+    var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 20000, 20000 ), groundMaterial );
+    mesh.position.y = - 250;
+    mesh.rotation.x = - Math.PI / 2;
+    mesh.receiveShadow = true;
+    //SleepingBearShow.appScene.add( mesh );
   }
 
   getCameraAspect(): number {
