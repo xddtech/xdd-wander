@@ -24,6 +24,22 @@ export class SleepingBearShow {
   create(showElement: Element): void {
     SleepingBearShow.appScene = new THREE.Scene();
 
+    this.addCameraAndControls();
+    
+    SleepingBearShow.appRender = new THREE.WebGLRenderer({ antialias: true });
+    SleepingBearShow.appRender.setClearColor(new THREE.Color(0xEEEEEE));
+    SleepingBearShow_onWindowResize();
+    showElement.appendChild(SleepingBearShow.appRender.domElement);
+
+    window.addEventListener("resize", SleepingBearShow_onWindowResize);
+
+    this.addShowObjects();
+    this.addShowLights();
+
+    SleepingBearShow_animate();
+  }
+
+  addCameraAndControls(): void {
     var fov = 50;
     var aspect = this.getCameraAspect();
     var near = 0.1;
@@ -32,7 +48,7 @@ export class SleepingBearShow {
     var camera = SleepingBearShow.appCamera;
     camera.position.x = 0;
     camera.position.y = 30;
-    camera.position.z = 100;
+    camera.position.z = 200;
     camera.lookAt(SleepingBearShow.appScene.position);
     /*
     var camControls = new THREE.FirstPersonControls(camera, document);
@@ -56,17 +72,6 @@ export class SleepingBearShow {
         trackballControls.staticMoving = true;
         //trackballControls.dynamicDampingFactor=0.3;
     SleepingBearShow.trackballControl = trackballControls;
-    
-    SleepingBearShow.appRender = new THREE.WebGLRenderer({ antialias: true });
-    SleepingBearShow.appRender.setClearColor(new THREE.Color(0xEEEEEE));
-    SleepingBearShow_onWindowResize();
-    showElement.appendChild(SleepingBearShow.appRender.domElement);
-
-    window.addEventListener("resize", SleepingBearShow_onWindowResize);
-
-    this.addShowObjects();
-
-    SleepingBearShow_animate();
   }
 
   addShowObjects(): void {
@@ -84,20 +89,15 @@ export class SleepingBearShow {
 
     var sandDune = new SandDune(SleepingBearShow.wanderServiceRef);
     sandDune.create(SleepingBearShow.appScene);
+  }
 
-    var loader = new THREE.TextureLoader();
-    var groundTexture = loader.load("assets/textures/lake-water.jpg");
-    //var groundTexture = loader.load("lake-water.jpg");
-    groundTexture.wrapS = THREE.RepeatWrapping;
-    groundTexture.wrapT = THREE.RepeatWrapping;
-    groundTexture.repeat.set( 25, 25 );
-    groundTexture.anisotropy = 16;
-    var groundMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: groundTexture } );
-    var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 20000, 20000 ), groundMaterial );
-    mesh.position.y = - 250;
-    mesh.rotation.x = - Math.PI / 2;
-    mesh.receiveShadow = true;
-    //SleepingBearShow.appScene.add( mesh );
+  addShowLights(): void {
+    SleepingBearShow.appScene.add( new THREE.AmbientLight( 0xffffff ) );
+    var light = new THREE.DirectionalLight( 0xdfebff, 1.75 );
+    light.position.set( 50, 200, 100 );
+    light.position.multiplyScalar( 1.3 );
+    light.castShadow = false;
+    //SleepingBearShow.appScene.add( light );
   }
 
   getCameraAspect(): number {
