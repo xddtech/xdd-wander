@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<center>
+<canvas id="myCanvas" width="700" height="700" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+</center>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+var width = 700;
+var depth = 700;
+var flatSlope = Math.tan(10 * Math.PI / 180);
+var topSlope = Math.tan(40 * Math.PI / 180);
+var buttomSlope = Math.tan(60 * Math.PI / 180);
+var xTransStart = 500;
+var xTransEnd = 300;
+var transLen = xTransStart - xTransEnd;
+ctx.beginPath();
+ctx.moveTo(0, 0);
+for (var i = width; i >= 0; i--) {
+  var x = i;
+  var y = depth - x;
+  var slope;
+  if (i > xTransStart) {
+    slope = topSlope;
+  } else if (i > xTransEnd && i <= xTransStart) {
+    var f = (i - xTransEnd) / transLen;
+    slope = topSlope * f + buttomSlope * (1-f);
+  } else {
+    slope = buttomSlope;
+  }
+
+  y = y* slope;
+  ctx.lineTo(x, y);
+}
+ctx.stroke();
+
+</script>
+
+</body>
+</html>

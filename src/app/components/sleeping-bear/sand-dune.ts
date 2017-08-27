@@ -50,8 +50,8 @@ export class SandDune {
     texture.repeat.set(2, 2);
     texture.flipY = false;
     //texture.anisotropy = 16;
-    //var lakeMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
-    var sandMaterial = new THREE.MeshPhongMaterial( {map: texture } );
+    var sandMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
+    //var sandMaterial = new THREE.MeshPhongMaterial( {map: texture } );
     //sandMaterial.opacity = 0.8;
     //sandMaterial.transparent = true;
    

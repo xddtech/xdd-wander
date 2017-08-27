@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<center>
+<canvas id="myCanvas" width="700" height="500" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+</center>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+var width = 700;
+var depth = 200;
+var depth2 = depth * depth;
+var xcenter = width / 2;
+var yreduce = 0.5;
+ctx.beginPath();
+ctx.moveTo(0, 0);
+for (var i = 0; i <= width; i++) {
+  var x = i;
+  var d = i - xcenter;
+  var d2 = d * d;
+  var y = 0;
+  if (d2 <= depth2) {
+    y = Math.sqrt(depth2 - d2);
+    var yf = (1 - d2 / depth2) * yreduce;
+    y = yf * y;
+  }
+  ctx.lineTo(x, y);
+}
+ctx.stroke();
+
+</script>
+
+</body>
+</html>

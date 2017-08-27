@@ -47,8 +47,8 @@ export class SleepingBearShow {
     SleepingBearShow.appCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     var camera = SleepingBearShow.appCamera;
     camera.position.x = 0;
-    camera.position.y = 30;
-    camera.position.z = 200;
+    camera.position.y = 30 + 100;
+    camera.position.z = -200 + 150;
     camera.lookAt(SleepingBearShow.appScene.position);
     /*
     var camControls = new THREE.FirstPersonControls(camera, document);
@@ -93,10 +93,17 @@ export class SleepingBearShow {
 
   addShowLights(): void {
     SleepingBearShow.appScene.add( new THREE.AmbientLight( 0xffffff ) );
+    /*
     var light = new THREE.DirectionalLight( 0xdfebff, 1.75 );
     light.position.set( 50, 200, 100 );
     light.position.multiplyScalar( 1.3 );
     light.castShadow = false;
+    //SleepingBearShow.appScene.add( light );
+    */
+    var light = new THREE.DirectionalLight( 0xdfebff, 0.5 );
+    light.position.set( 50, -200, 100 );
+    //light.position.multiplyScalar( 1.3 );
+    light.castShadow = true;
     //SleepingBearShow.appScene.add( light );
   }
 

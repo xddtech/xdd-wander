@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<center>
+<canvas id="myCanvas" width="700" height="700" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+</center>
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+var width = 700;
+var depth = 700;
+
+var sections = [];
+var s0 = {
+  start: width,
+  end: width - 50,
+  slope1: Math.tan(0 * Math.PI / 180),
+  slope2: Math.tan(5 * Math.PI / 180)
+}
+var s1 = {
+  start: width - 50,
+  end: width - 100,
+  slope1: Math.tan(10 * Math.PI / 180),
+  slope2: Math.tan(10 * Math.PI / 180)
+}
+var s2 = {
+  start: width - 100,
+  end: width - 200,
+  slope1: Math.tan(10 * Math.PI / 180),
+  slope2: Math.tan(40 * Math.PI / 180)
+}
+var s3 = {
+  start: width - 200,
+  end: width - 400,
+  slope1: Math.tan(40 * Math.PI / 180),
+  slope2: Math.tan(50 * Math.PI / 180)
+}
+var s4 = {
+  start: width - 400,
+  end: width - 500,
+  slope1: Math.tan(50 * Math.PI / 180),
+  slope2: Math.tan(60 * Math.PI / 180)
+}
+var s5 = {
+  start: width - 500,
+  end: width - 650,
+  slope1: Math.tan(60 * Math.PI / 180),
+  slope2: Math.tan(60 * Math.PI / 180)
+}
+var s6 = {
+  start: width - 650,
+  end: 0,
+  slope1: Math.tan(60 * Math.PI / 180),
+  slope2: Math.tan(40 * Math.PI / 180)
+}
+sections.push(s0);
+sections.push(s1);
+sections.push(s2);
+sections.push(s3);
+sections.push(s4);
+sections.push(s5);
+sections.push(s6);
+
+function getSection(x) {
+  for(var j = 0; j < sections.length; j++) {
+    var s = sections[j];
+    if (x <= s.start && x > s.end) {
+      return s;
+    }
+  }
+  return sections[sections.length - 1];
+}
+
+function getSlope(section, i) {
+  var len = section.end - section.start;
+  var d = i - section.start;
+  var f = Math.abs(d / len);
+  var slope = section.slope1 * (1 - f) + section.slope2 * f;
+  return slope;
+}
+
+var ybase = 0;
+ctx.beginPath();
+ctx.moveTo(width, ybase);
+for (var i = width; i >= 0; i--) {
+  var x = i;
+  var sec = getSection(i);
+  var slope = getSlope(sec, i);
+  var dy = slope;
+  var y = ybase + dy;
+  ybase = y;
+  ctx.lineTo(x, y);
+}
+ctx.stroke();
+
+</script>
+
+</body>
+</html>
