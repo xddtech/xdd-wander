@@ -9,10 +9,60 @@ declare var $: JQueryStatic;
 
 export class SandDune {
 
+  duneWidth = 100;
+  duneLength = 100;
+  widthSegments = 50;
+  lengthSegments = 50;
+  duneGeometry: THREE.PlaneGeometry;
+
   constructor(private wanderService: WanderService) {
   }
 
   create(appScene: THREE.Scene) : void {
+    this.duneGeometry = new THREE.PlaneGeometry(this.duneWidth, this.duneLength, 
+      this.widthSegments, this.lengthSegments);
+    
+    this.createCurve();
+
+    var meshParams = {
+      wireframe: true,
+      overdraw: 1,
+      color: 0x00ffff
+    };
+    var duneMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111} );
+    var duneMesh = THREE.SceneUtils.createMultiMaterialObject(this.duneGeometry,
+       [new THREE.MeshBasicMaterial(<THREE.MeshBasicMaterialParameters>meshParams),
+                duneMaterial
+          ]);
+    
+    //duneMesh.rotation.x = 0;
+    duneMesh.position.y = this.duneLength / 2;
+    appScene.add(duneMesh);
+  }
+
+  createCurve(): void {
+    var depth = 20;
+    var depth2 = depth * depth;
+    var xcenter = 0;
+    var zreduce = 0.5;
+
+    var indexLen = this.duneGeometry.vertices.length;
+    for ( var i = 0; i < indexLen; i ++ ) {
+      var vert = this.duneGeometry.vertices[i];
+      var dx = vert.x - xcenter;
+      var dx2 = dx * dx;
+      var dz = 0;
+      if (dx2 <= depth2) {
+        dz = Math.sqrt(depth2 - dx2);
+        var zf = (1 - dx2 / depth2) * zreduce;
+        dz = zf * dz;
+        vert.z = vert.z - dz;
+      }
+    }
+  }
+
+  /*
+  createOld(appScene: THREE.Scene) : void {
     var width = 100;
     var length = 100;
     var widthSegments = 50;
@@ -70,6 +120,6 @@ export class SandDune {
     sandMesh.rotation.x = -0.0 * Math.PI;
     sandMesh.position.y = length / 2;
     appScene.add(sandMesh);
-
   }
+  */
 }
