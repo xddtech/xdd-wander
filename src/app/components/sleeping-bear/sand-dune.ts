@@ -41,16 +41,39 @@ export class SandDune {
   }
 
   createCurve(): void {
-    var depth = 20;
-    var depth2 = depth * depth;
+    var depthTop = 20;
+    var depthBottom = 10;
     var xcenter = 0;
     var zreduce = 0.5;
 
+    var dLength = this.duneLength / this.lengthSegments;
+    for (var ih = 0; ih <= this.lengthSegments; ih++) {
+      var y0 = this.duneLength / 2;
+      var dy = y0 - ih * dLength;
+      var yrate = 1 - ih / this.lengthSegments;
+      var depth = depthTop * yrate + (1 - yrate) * depthBottom;
+      var depth2 = depth * depth;
+      for (var iw = 0; iw <= this.widthSegments; iw++) {
+        var ivertex = iw + ih * (this.widthSegments + 1);
+        var vert = this.duneGeometry.vertices[ivertex];
+        var dx = vert.x - xcenter;
+        var dx2 = dx * dx; 
+        var dz = 0;
+        if (dx2 <= depth2) {
+          dz = Math.sqrt(depth2 - dx2);
+          var zf = (1 - dx2 / depth2) * zreduce;
+          dz = zf * dz;
+          vert.z = vert.z - dz;
+        }
+      }
+    }
+
+    /*
     var indexLen = this.duneGeometry.vertices.length;
     for ( var i = 0; i < indexLen; i ++ ) {
       var vert = this.duneGeometry.vertices[i];
       var dx = vert.x - xcenter;
-      var dx2 = dx * dx;
+      var dx2 = dx * dx; 
       var dz = 0;
       if (dx2 <= depth2) {
         dz = Math.sqrt(depth2 - dx2);
@@ -59,6 +82,7 @@ export class SandDune {
         vert.z = vert.z - dz;
       }
     }
+    */
   }
 
   /*
