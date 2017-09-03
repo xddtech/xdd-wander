@@ -23,6 +23,7 @@ export class SandDune {
       this.widthSegments, this.lengthSegments);
     
     this.createCurve();
+    this.createSlope();
 
     var meshParams = {
       wireframe: true,
@@ -67,22 +68,110 @@ export class SandDune {
         }
       }
     }
+  }
 
-    /*
+  createSlope(): void {
+    var length = this.duneLength;
+    var sections = [];
+    var s0 = {
+      start: 0,
+      end: 10,
+      slope1: 40 * Math.PI / 180,
+      slope2: 60 * Math.PI / 180
+    }
+    var s1 = {
+      start: 10,
+      end: 50,
+      slope1: 60 * Math.PI / 180,
+      slope2: 60 * Math.PI / 180
+    }
+    var s2 = {
+      start: 50,
+      end: 70,
+      slope1: 60 * Math.PI / 180,
+      slope2: 40 * Math.PI / 180
+    }
+    var s3 = {
+      start: 70,
+      end: 90,
+      slope1: 40 * Math.PI / 180,
+      slope2: 20 * Math.PI / 180
+    }
+    var s4 = {
+      start: 90,
+      end: 95,
+      slope1: 20 * Math.PI / 180,
+      slope2: 10 * Math.PI / 180
+    }
+    var s5 = {
+      start: 90,
+      end: this.duneLength,
+      slope1: 10 * Math.PI / 180,
+      slope2: 5 * Math.PI / 180
+    }
+    sections.push(s0);
+    sections.push(s1);
+    sections.push(s2);
+    sections.push(s3);
+    sections.push(s4);
+    sections.push(s5);
+
+    var dLength = this.duneLength / this.lengthSegments;
     var indexLen = this.duneGeometry.vertices.length;
-    for ( var i = 0; i < indexLen; i ++ ) {
-      var vert = this.duneGeometry.vertices[i];
-      var dx = vert.x - xcenter;
-      var dx2 = dx * dx; 
-      var dz = 0;
-      if (dx2 <= depth2) {
-        dz = Math.sqrt(depth2 - dx2);
-        var zf = (1 - dx2 / depth2) * zreduce;
-        dz = zf * dz;
+    console.log("vertex len=" + indexLen);
+    var zbase = 0;
+    var ybase = -this.duneLength / 2;
+    for (var ih = 1; ih <= this.lengthSegments; ih++) {
+      var iLength = ih * dLength;
+      var section = this.getSection(sections, iLength);
+      for (var iw = 0; iw <= this.widthSegments; iw++) {
+        var ivertex = indexLen - 1 - (iw + ih * (this.widthSegments + 1));
+        var ivertexBase = indexLen - 1 - (iw + (ih - 1) * (this.widthSegments + 1));
+        var vert = this.duneGeometry.vertices[ivertex];
+
+        if (ih === 1) {
+          console.log("vert: " + vert.x + ", " + vert.y + ", " + vert.z);
+        }
+
+        var vertBase = this.duneGeometry.vertices[ivertexBase];
+        var slope = this.getSlope(section, iLength);
+
+        //if (dy < 50) {
+        //  slope = 60 * Math.PI / 180;
+        //} else {
+        //  slope = 30 * Math.PI / 180;
+        //}
+
+        var dz = dLength * Math.cos(slope) + zbase;
+        var dy = dLength * Math.sin(slope) + ybase;
         vert.z = vert.z - dz;
+        vert.y = dy;
+        //vert.z = vert.z - dLength * Math.cos(slope);
+        //vert.y = vertBase.y + dLength * Math.sin(slope);
+        if (iw === this.widthSegments) {
+          zbase = dz;
+          ybase = dy;
+        }
       }
     }
-    */
+  }
+
+  getSection(sections: any[], x): any {
+    for(var j = 0; j < sections.length; j++) {
+      var s = sections[j];
+      if (x >= s.start && x < s.end) {
+        return s;
+      }
+    }
+    return sections[sections.length - 1];
+  }
+
+  getSlope(section: any, x: number): number {
+    var len = section.end - section.start;
+    var d = x - section.start;
+    var f = Math.abs(d / len);
+    var slope = section.slope1 * (1 - f) + section.slope2 * f;
+    return Math.abs(slope);
   }
 
   /*
