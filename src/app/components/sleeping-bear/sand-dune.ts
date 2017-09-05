@@ -22,8 +22,9 @@ export class SandDune {
     this.duneGeometry = new THREE.PlaneGeometry(this.duneWidth, this.duneLength, 
       this.widthSegments, this.lengthSegments);
     
-    this.createCurve();
+    //this.createCurve();
     this.createSlope();
+    this.createCurveLater();
 
     var meshParams = {
       wireframe: true,
@@ -65,6 +66,50 @@ export class SandDune {
           var zf = (1 - dx2 / depth2) * zreduce;
           dz = zf * dz;
           vert.z = vert.z - dz;
+        }
+      }
+    }
+  }
+
+  createCurveLater(): void {
+    var depthTop = 20;
+    var depthBottom = 10;
+    var xcenter = 0;
+    var zreduce = 0.5;
+
+    this.duneGeometry.computeFaceNormals();
+    //this.duneGeometry.computeVertexNormals();
+
+    var dLength = this.duneLength / this.lengthSegments;
+    var iface = 0;
+    for (var ih = 0; ih <= this.lengthSegments; ih++) {
+      var yLen = ih * dLength;
+      var yrate = 1 - ih / this.lengthSegments;
+      var depth = depthTop * yrate + (1 - yrate) * depthBottom;
+      var depth2 = depth * depth;
+
+      for (var iw = 0; iw <= this.widthSegments; iw++) {
+        var ivertex = iw + ih * (this.widthSegments + 1);
+        var vert = this.duneGeometry.vertices[ivertex];
+        var dx = vert.x - xcenter;
+        var dx2 = dx * dx; 
+        var dz = 0;
+
+        var face = this.duneGeometry.faces[iface];
+        var normal = face.normal;
+
+        if (dx2 <= depth2) {
+          var dn = Math.sqrt(depth2 - dx2);
+          var zf = (1 - dx2 / depth2) * zreduce;
+          dn = zf * dn;
+          var ny = - normal.y * dn;
+          var nz = -normal.z * dn;
+          vert.z = vert.z + nz;
+          vert.y = vert.y + ny;
+        }
+        
+        if (iw < this.widthSegments) {
+          iface = iface + 1;
         }
       }
     }
@@ -136,22 +181,26 @@ export class SandDune {
         var vertBase = this.duneGeometry.vertices[ivertexBase];
         var slope = this.getSlope(section, iLength);
 
-        //if (dy < 50) {
-        //  slope = 60 * Math.PI / 180;
-        //} else {
-        //  slope = 30 * Math.PI / 180;
-        //}
-
         var dz = dLength * Math.cos(slope) + zbase;
-        var dy = dLength * Math.sin(slope) + ybase;
+        //var dy = dLength * Math.sin(slope) + ybase;
+        var dy = dLength * Math.sin(slope) + vertBase.y;
         vert.z = vert.z - dz;
         vert.y = dy;
-        //vert.z = vert.z - dLength * Math.cos(slope);
-        //vert.y = vertBase.y + dLength * Math.sin(slope);
         if (iw === this.widthSegments) {
           zbase = dz;
           ybase = dy;
         }
+
+        /*
+        var slope1 = Math.PI / 2 - slope;
+        var l1 = Math.abs(vert.z * Math.tan(slope1));
+        var za1 = vert.z / Math.cos(slope1);
+        var zb1 = (dLength - l1) * Math.sin(slope1);
+        var z1 = za1 + zb1;
+        var y1 = (dLength - l1) * Math.cos(slope1);
+        vert.y = vertBase.y - y1;
+        //vert.z =  z1;
+        */
       }
     }
   }
