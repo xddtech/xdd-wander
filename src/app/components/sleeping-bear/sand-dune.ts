@@ -9,10 +9,10 @@ declare var $: JQueryStatic;
 
 export class SandDune {
 
-  duneWidth = 100;
-  duneLength = 100;
-  widthSegments = 50;
-  lengthSegments = 50;
+  duneWidth = AppSbParams.duneWidth;
+  duneLength = AppSbParams.duneLength;
+  widthSegments = AppSbParams.duneWidthSegments;
+  lengthSegments = AppSbParams.duneLengthSegments;
   duneGeometry: THREE.PlaneGeometry;
 
   constructor(private wanderService: WanderService) {
@@ -26,6 +26,10 @@ export class SandDune {
     this.createSlope();
     this.createCurveLater();
 
+    this.duneGeometry.normalsNeedUpdate = true;
+    this.duneGeometry.verticesNeedUpdate = true;
+
+    /*
     var meshParams = {
       wireframe: true,
       overdraw: 1,
@@ -36,7 +40,23 @@ export class SandDune {
        [new THREE.MeshBasicMaterial(<THREE.MeshBasicMaterialParameters>meshParams),
                 duneMaterial
           ]);
+    */
     
+    var loader = new THREE.TextureLoader();
+    var texture = loader.load("assets/textures/sand.png");
+    texture.wrapS = THREE.MirroredRepeatWrapping;
+    texture.wrapT = THREE.MirroredRepeatWrapping;
+    texture.repeat.set(8, 2);
+    texture.flipY = false;
+    //texture.anisotropy = 16;
+    var sandMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
+    //var sandMaterial = new THREE.MeshPhongMaterial( {map: texture } );
+    //sandMaterial.opacity = 0.8;
+    //sandMaterial.transparent = true;
+    var duneMesh = THREE.SceneUtils.createMultiMaterialObject(this.duneGeometry,
+       [sandMaterial]);
+
+
     //duneMesh.rotation.x = 0;
     duneMesh.position.y = this.duneLength / 2;
     appScene.add(duneMesh);
@@ -107,6 +127,10 @@ export class SandDune {
           vert.z = vert.z + nz;
           vert.y = vert.y + ny;
         }
+        // add ramdom
+        var randomFactor = 1;
+        var ry = randomFactor * Math.random();
+        vert.y = vert.y + ry;
         
         if (iw < this.widthSegments) {
           iface = iface + 1;

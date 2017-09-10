@@ -93,18 +93,19 @@ export class SleepingBearShow {
 
   addShowLights(): void {
     SleepingBearShow.appScene.add( new THREE.AmbientLight( 0xffffff ) );
-    /*
+    
     var light = new THREE.DirectionalLight( 0xdfebff, 1.75 );
     light.position.set( 50, 200, 100 );
     light.position.multiplyScalar( 1.3 );
     light.castShadow = false;
     //SleepingBearShow.appScene.add( light );
-    */
+    
     var light = new THREE.DirectionalLight( 0xdfebff, 0.5 );
-    light.position.set( 50, -200, 100 );
+    //light.position.set(0, 200, 200 );
     //light.position.multiplyScalar( 1.3 );
+    light.position.set(-200, 200, 0 );
     light.castShadow = true;
-    //SleepingBearShow.appScene.add( light );
+    SleepingBearShow.appScene.add( light );
   }
 
   getCameraAspect(): number {
