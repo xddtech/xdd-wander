@@ -25,9 +25,12 @@ export class SandDune {
     //this.createCurve();
     this.createSlope();
     this.createCurveLater();
+    this.createRoughness();
 
     this.duneGeometry.normalsNeedUpdate = true;
     this.duneGeometry.verticesNeedUpdate = true;
+    this.duneGeometry.computeFaceNormals();
+    this.duneGeometry.computeVertexNormals();
 
     /*
     var meshParams = {
@@ -49,7 +52,15 @@ export class SandDune {
     texture.repeat.set(8, 2);
     texture.flipY = false;
     //texture.anisotropy = 16;
-    var sandMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
+    //var sandMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
+    var sandParam = {
+      color: 0xaaaaaa,
+      shininess: 80,
+      specular: 0xffffff, 
+      map: texture
+    };
+    var sandMaterial = new THREE.MeshPhongMaterial(sandParam);
+
     //var sandMaterial = new THREE.MeshPhongMaterial( {map: texture } );
     //sandMaterial.opacity = 0.8;
     //sandMaterial.transparent = true;
@@ -226,6 +237,14 @@ export class SandDune {
         //vert.z =  z1;
         */
       }
+    }
+  }
+
+  createRoughness(): any {
+    for (var i = 0; i < this.duneGeometry.vertices.length; i++) {
+      var vert = this.duneGeometry.vertices[i];
+      var rz = Math.random() - 0.5;
+      vert.z = vert.z + rz * AppSbParams.duneRoughness;
     }
   }
 

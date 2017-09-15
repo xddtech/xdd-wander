@@ -14,6 +14,7 @@ export class AppSbParams {
 
   static duneWidth = 400;
   static duneLength = 100;
-  static duneWidthSegments = 50;
-  static duneLengthSegments = 50;
+  static duneWidthSegments = 150;
+  static duneLengthSegments = 150;
+  static duneRoughness = 0.1;
 }

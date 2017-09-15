@@ -106,11 +106,10 @@ export class SleepingBearShow {
     light.castShadow = false;
     //SleepingBearShow.appScene.add( light );
     
-    var light = new THREE.DirectionalLight( 0xdfebff, 0.5 );
-    //light.position.set(0, 200, 200 );
-    //light.position.multiplyScalar( 1.3 );
-    light.position.set(-200, 200, 0 );
-    light.castShadow = true;
+    var light = new THREE.DirectionalLight( 0xdfebff, 0.8 );
+    //light.position.multiplyScalar( 1 );
+    light.position.set(-250, 510, 1150 );
+    light.castShadow = false;
     SleepingBearShow.appScene.add( light );
   }
 
