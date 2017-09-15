@@ -46,10 +46,16 @@ export class SleepingBearShow {
     var far = 1000;
     SleepingBearShow.appCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     var camera = SleepingBearShow.appCamera;
-    camera.position.x = 0;
-    camera.position.y = 30 + 100;
-    camera.position.z = -200 + 150;
-    camera.lookAt(SleepingBearShow.appScene.position);
+    camera.position.x = 150;
+    //camera.position.y = 30 + 100;
+    //camera.position.z = -200 + 150;
+    camera.position.y = 15;
+    camera.position.z = 50;
+
+    var lookAt = new THREE.Vector3(-50, 0, 0);
+    camera.lookAt(lookAt);
+    //SleepingBearShow.appScene.position = lookAt;
+    //camera.lookAt(SleepingBearShow.appScene.position);
     /*
     var camControls = new THREE.FirstPersonControls(camera, document);
         camControls.lookSpeed = 0.4;
@@ -134,6 +140,10 @@ var SleepingBearShow_animate = function() {
   } else {
     console.error("appRender is null");
   }
+
+  //var p = SleepingBearShow.appScene.position;
+  //var p = SleepingBearShow.appCamera.position;
+  //console.log("cx=" + p.x + ", " + p.y + ", " + p.z);
 }
 
 function SleepingBearShow_onWindowResize() {
