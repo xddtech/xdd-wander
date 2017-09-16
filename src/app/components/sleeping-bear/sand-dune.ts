@@ -55,7 +55,7 @@ export class SandDune {
     //var sandMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     var sandParam = {
       color: 0xaaaaaa,
-      shininess: 80,
+      shininess: 100,
       specular: 0xffffff, 
       map: texture
     };

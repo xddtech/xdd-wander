@@ -8,13 +8,13 @@ export class AppSbParams {
 
   static waterWidth = 400;
   static waterLength = 400;
-  static waterWidthSegments = 20;
-  static waterLengthSegments = 10;
+  static waterWidthSegments = 50;
+  static waterLengthSegments = 50;
   static waterShift = AppSbParams.beachShift;
 
   static duneWidth = 400;
   static duneLength = 100;
   static duneWidthSegments = 150;
   static duneLengthSegments = 150;
-  static duneRoughness = 0.1;
+  static duneRoughness = 0.05;
 }

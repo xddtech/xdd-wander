@@ -126,7 +126,7 @@ var SleepingBearShow_animate = function() {
   var deltaTime = SleepingBearShow.showClock.getDelta(),
       elapsedTime = SleepingBearShow.showClock.getElapsedTime() * 10;
       
-  //SleepingBearShow.lakeMichigan.animate(deltaTime, elapsedTime);
+  SleepingBearShow.lakeMichigan.animate(deltaTime, elapsedTime);
 
   if (SleepingBearShow.appRender != null) {
     try {
