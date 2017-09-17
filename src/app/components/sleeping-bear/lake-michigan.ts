@@ -139,9 +139,22 @@ export class LakeMichigan {
   }
 
   animate(deltaTime: number, elapsedTime: number): void {
+    /*
     for ( var i = 0, l = this.waterGeometry.vertices.length; i < l; i ++ ) {
       this.waterGeometry.vertices[ i ].z = 0.1 * Math.sin( i / 5 + (elapsedTime + i ) / 7 );
       this.waterGeometry.vertices[ i ].y += 0.06 * Math.sin( i / 5 + (elapsedTime + i ) / 7 );
+    }
+    */
+    var dWaterLen = AppSbParams.waterLength / AppSbParams.waterLengthSegments;
+    for (var kh = 0; kh <= AppSbParams.waterLengthSegments; kh++) {
+      var waterLen = dWaterLen * kh;
+      var fw = waterLen / AppSbParams.waterLengthSegments;
+      for (var kw = 0; kw < AppSbParams.waterWidthSegments; kw++) {
+        var kvetex = kw + kh * (AppSbParams.waterLengthSegments + 1);
+        var vetex = this.waterGeometry.vertices[ kvetex ];
+        vetex.z = fw * 0.1 * Math.sin(kvetex / 15 +  elapsedTime / 7 );
+        vetex.y += fw * 0.06 * Math.sin(kvetex / 15 + elapsedTime / 7 );        
+      }
     }
     this.waterGeometry.verticesNeedUpdate = true;
 
@@ -153,8 +166,9 @@ export class LakeMichigan {
         for (var iw = 0; iw < AppSbParams.beachWidthSegments; iw++) {
           var ivertex = iw + ih * (AppSbParams.beachWidthSegments + 1);
           var vert = this.beachGeometry.vertices[ivertex];
-          vert.z += 0.01 * Math.sin( i / 5 + (elapsedTime + i ) / 7 );
-          vert.y += 0.005 * Math.sin( i / 5 + (elapsedTime + i ) / 7 );
+          var iv = 0;
+          vert.z += 0.01 * Math.sin( iv / 5 + (elapsedTime + iv ) / 7 );
+          vert.y += 0.005 * Math.sin( iv / 5 + (elapsedTime + iv ) / 7 );
         }
       }
     }

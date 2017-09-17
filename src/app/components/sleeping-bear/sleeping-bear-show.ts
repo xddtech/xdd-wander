@@ -16,6 +16,7 @@ export class SleepingBearShow {
   static showClock = new THREE.Clock();
   static appCamControl: THREE.FirstPersonControls;
   static trackballControl: THREE.TrackballControls;
+  static sbearControl: THREE.SleepingBearControls;
 
   constructor(private wanderService: WanderService) {
     SleepingBearShow.wanderServiceRef = wanderService;
@@ -33,6 +34,7 @@ export class SleepingBearShow {
 
     window.addEventListener("resize", SleepingBearShow_onWindowResize);
 
+    this.addBackground();
     this.addShowObjects();
     this.addShowLights();
 
@@ -56,19 +58,37 @@ export class SleepingBearShow {
     camera.lookAt(lookAt);
     //SleepingBearShow.appScene.position = lookAt;
     //camera.lookAt(SleepingBearShow.appScene.position);
+    
     /*
     var camControls = new THREE.FirstPersonControls(camera, document);
-        camControls.lookSpeed = 0.4;
+        camControls.lookSpeed = 0; //0.4;
         camControls.movementSpeed = 20;
-        camControls.noFly = true;
-        camControls.lookVertical = true;
+        camControls.noFly = false;
+        camControls.lookVertical = false;
         camControls.constrainVertical = true;
-        camControls.verticalMin = 1.0;
-        camControls.verticalMax = 2.0;
-        camControls.lon = -150;
-        camControls.lat = 120;
+        //camControls.verticalMin = 1.0;
+        //camControls.verticalMax = 2.0;
+        //camControls.lon = -150;
+        //camControls.lat = 120;
     SleepingBearShow.appCamControl = camControls;
     */
+
+    var sbearControl = new THREE.SleepingBearControls(camera, document);
+        sbearControl.lookSpeed = 0.4;
+        sbearControl.movementSpeed = 20;
+        sbearControl.noFly = false;
+        sbearControl.lookVertical = false;
+        sbearControl.constrainVertical = true;
+        //sbearControl.target = lookAt;
+        sbearControl.activeLook = false;
+
+        //camControls.verticalMin = 1.0;
+        //camControls.verticalMax = 2.0;
+        //camControls.lon = -150;
+        //camControls.lat = 120;
+    SleepingBearShow.sbearControl = sbearControl;
+    
+    /*
     var trackballControls = new THREE.TrackballControls(camera, document);
         trackballControls.rotateSpeed = 1.0;
         trackballControls.zoomSpeed = 1.0;
@@ -78,23 +98,26 @@ export class SleepingBearShow {
         trackballControls.staticMoving = true;
         //trackballControls.dynamicDampingFactor=0.3;
     SleepingBearShow.trackballControl = trackballControls;
+    */
   }
 
   addShowObjects(): void {
-    /*
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    var cube = new THREE.Mesh(geometry, material);
-    SleepingBearShow.appScene.add( cube );
-    */
     var axisHelper = new THREE.AxisHelper(200);
-    SleepingBearShow.appScene.add(axisHelper);
+    //SleepingBearShow.appScene.add(axisHelper);
 
     SleepingBearShow.lakeMichigan = new LakeMichigan(SleepingBearShow.wanderServiceRef);
     SleepingBearShow.lakeMichigan.create(SleepingBearShow.appScene);
 
     var sandDune = new SandDune(SleepingBearShow.wanderServiceRef);
     sandDune.create(SleepingBearShow.appScene);
+  }
+
+  addBackground(): void {
+    var loader = new THREE.TextureLoader();
+    var texture = loader.load("assets/background-1.png");
+    SleepingBearShow.appScene.background = texture;
+    //SleepingBearShow.appScene.background = new THREE.Color( 0xcce0ff );
+		//SleepingBearShow.appScene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
   }
 
   addShowLights(): void {
@@ -132,7 +155,8 @@ var SleepingBearShow_animate = function() {
     try {
       SleepingBearShow.appRender.render(SleepingBearShow.appScene, SleepingBearShow.appCamera);
       //SleepingBearShow.appCamControl.update(deltaTime);
-      SleepingBearShow.trackballControl.update();
+      SleepingBearShow.sbearControl.update(deltaTime);
+      //SleepingBearShow.trackballControl.update();
     } catch(error) {
       console.error("render error " + error);
     }

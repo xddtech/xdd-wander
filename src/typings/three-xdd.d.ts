@@ -6757,6 +6757,25 @@ declare namespace THREE {
     }
 
     //XDD
+    export class SleepingBearControls {
+        lookSpeed: number;
+        movementSpeed: number;
+        noFly: boolean;
+        lookVertical: boolean;
+        constrainVertical: boolean;
+        verticalMin: number;
+        verticalMax: number;
+        lon: number;
+        lat: number;
+        target: Vector3;
+        activeLook: boolean;
+
+        update(delta: number): void;
+
+        constructor(camera: any, dom: any);
+    }
+
+    //XDD
     export class TrackballControls {
         constructor(camera: any, dom: any);
 
