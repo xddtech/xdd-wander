@@ -6771,6 +6771,7 @@ declare namespace THREE {
         activeLook: boolean;
 
         update(delta: number): void;
+        init(): void;
 
         constructor(camera: any, dom: any);
     }

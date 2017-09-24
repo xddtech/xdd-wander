@@ -2,7 +2,11 @@
 THREE.SleepingBearControls = function ( object, domElement ) {
 
 	this.object = object;
-	this.target = new THREE.Vector3(-50, 0, 0 );
+	this.position0 = new THREE.Vector3(0, 0, 0 );
+	this.target = new THREE.Vector3(0, 0, 0 );
+	this.target0 = new THREE.Vector3(-50, 0, 0);
+	this.target1 = new THREE.Vector3(0, 0, 0);
+	this.targetDistance1 = 1.0;
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
 
@@ -52,6 +56,18 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	}
 
 	//
+	this.init = function() {
+	  this.position0.x = this.object.position.x;
+	  this.position0.y = this.object.position.y;
+	  this.position0.z = this.object.position.z;
+
+	  this.target0 = new THREE.Vector3(-50, 0, 0);
+	  this.target1 = new THREE.Vector3(0, 0, 0);
+	  var cp = this.object.position;
+	  var cameraV3 = new THREE.Vector3(cp.x, cp.y, cp.z);
+	  //this.targetDistance1 = cameraV3.distanceTo(this.target1);
+	  this.targetDistance1 = Math.abs(cp.x - this.target1.x);
+	}
 
 	this.handleResize = function () {
 
@@ -204,11 +220,43 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 		var actualMoveSpeed = delta * this.movementSpeed;
 
-		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
-		if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+		//if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+		//if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ||
+		     this.moveLeft) {
+			var mzforw =  -(actualMoveSpeed + this.autoSpeedFactor);
+			var mxforw = -actualMoveSpeed;
+			this.object.translateX(mxforw);
+			this.object.translateZ(mzforw);
+			if(this.object.position.x < 0) {
+				this.object.position.x = 0;
+			}
+		}
+		if ( this.moveBackward || this.moveRight) {
+			var p0Clone = this.position0.clone();
+			p0Clone.sub(this.object.position);
+			p0Clone.normalize();
 
-		if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
-		if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+			var mxback = actualMoveSpeed * p0Clone.x;
+			var myback = actualMoveSpeed * p0Clone.y;
+			var mzback = actualMoveSpeed * p0Clone.z;
+
+			this.object.translateX(mxback);
+			this.object.translateY(myback);
+			this.object.translateZ(mzback);
+			if(this.object.position.x > this.position0.x) {
+				this.object.position.x = this.position0.x;
+			}
+			if(this.object.position.y < this.position0.y) {
+				this.object.position.y = this.position0.y;
+			}
+	       	if(this.object.position.z < this.position0.z) {
+				this.object.position.z = this.position0.z;
+			}
+		}
+
+		//if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
+		//if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
 
 		if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
 		if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
@@ -246,9 +294,24 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 		var targetPosition = this.target,
 			position = this.object.position;
 
-		targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-		targetPosition.y = position.y + 100 * Math.cos( this.phi );
-		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+		//targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
+		//targetPosition.y = position.y + 100 * Math.cos( this.phi );
+		//targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+
+        var cp = this.object.position;
+	    var cameraV3 = new THREE.Vector3(cp.x, cp.y, cp.z);
+		//var dtarget1 = cameraV3.distanceTo(this.target1);
+		var dtarget1 = Math.abs(cp.x - this.target1.x);
+		var tf = dtarget1 / this.targetDistance1;
+		var tx = tf * this.target0.x + (1 - tf) * this.target1.x;
+		var ty = tf * this.target0.y + (1 - tf) * this.target1.y;
+		var tz = tf * this.target0.z + (1 - tf) * this.target1.z;
+		var targetPos = {
+			x: tx,
+			y: ty,
+			z: tx
+		};
+		this.object.lookAt( targetPos );
 
 		//this.object.lookAt( targetPosition );
 
