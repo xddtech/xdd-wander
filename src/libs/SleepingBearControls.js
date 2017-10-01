@@ -12,6 +12,7 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 	this.movementSpeed = 1.0;
 	this.lookSpeed = 0.005;
+	this.climbSpeed = 1.0;
 
 	this.lookVertical = true;
 	this.autoForward = false;
@@ -48,6 +49,10 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 	this.viewHalfX = 0;
 	this.viewHalfY = 0;
+
+	this.SECTION_LAKE = 0;
+	this.SECTION_SAND = 1;
+	this.currentSection = this.SECTION_LAKE;
 
 	if ( this.domElement !== document ) {
 
@@ -204,6 +209,14 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			return;
 
 		}
+		if (this.currentSection === this.SECTION_LAKE) {
+			this.updateLakeSection(delta);
+		} else if(this.currentSection === this.SECTION_SAND) {
+			this.updateSandSection(delta);
+		}
+	}
+
+	this.updateLakeSection = function(delta) {
 
 		if ( this.heightSpeed ) {
 
@@ -230,6 +243,14 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			this.object.translateZ(mzforw);
 			if(this.object.position.x < 0) {
 				this.object.position.x = 0;
+			}
+
+			console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
+		                  ", " + this.object.position.z);
+
+			if(this.object.position.z < 1) {
+				this.currentSection = this.SECTION_SAND;
+				console.info("switch to sand section ");
 			}
 		}
 		if ( this.moveBackward || this.moveRight) {
@@ -316,6 +337,86 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 		//this.object.lookAt( targetPosition );
 
 	};
+
+	this.updateSandSection = function(delta) {
+		
+		var actualMoveSpeed = delta * this.climbSpeed;
+
+		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) {
+			var mzforw =  -(actualMoveSpeed + this.autoSpeedFactor);
+			var myforw = actualMoveSpeed;
+			this.object.translateY(myforw);
+			this.object.translateZ(mzforw);
+			if(this.object.position.y < 1) {
+				this.object.position.y = 1;
+			}
+		}
+		if ( this.moveBackward || this.moveRight) {
+			var p0Clone = this.position0.clone();
+			p0Clone.sub(this.object.position);
+			p0Clone.normalize();
+
+			var mxback = 0;
+			var myback = -actualMoveSpeed;
+			var mzback = actualMoveSpeed;
+
+			this.object.translateX(mxback);
+			this.object.translateY(myback);
+			this.object.translateZ(mzback);
+
+			if(this.object.position.y < 1) {
+				this.currentSection = this.SECTION_LAKE;
+				console.info("switch to lake section ");
+			}
+
+		}
+
+		//if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
+		//if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+
+		var actualLookSpeed = delta * this.lookSpeed;
+
+		if ( !this.activeLook ) {
+
+			actualLookSpeed = 0;
+
+		}
+
+		var verticalLookRatio = 1;
+
+		if ( this.constrainVertical ) {
+
+			verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+
+		}
+
+		this.lon += this.mouseX * actualLookSpeed;
+		if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+
+		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+		this.phi = THREE.Math.degToRad( 90 - this.lat );
+
+		this.theta = THREE.Math.degToRad( this.lon );
+
+		if ( this.constrainVertical ) {
+
+			this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+
+		}
+
+        var cp = this.object.position;
+	    
+		var tx = cp.x;
+		var ty = cp.y + 1;
+		var tz = cp.z + 1;
+		var targetPos = {
+			x: tx,
+			y: ty,
+			z: tx
+		};
+		this.object.lookAt( targetPos );
+
+	}
 
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );

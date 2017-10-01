@@ -14,6 +14,7 @@ export class SandDune {
   widthSegments = AppSbParams.duneWidthSegments;
   lengthSegments = AppSbParams.duneLengthSegments;
   duneGeometry: THREE.PlaneGeometry;
+  static sandDuneCenterLine: THREE.Vector3[] = new Array();
 
   constructor(private wanderService: WanderService) {
   }
@@ -26,6 +27,7 @@ export class SandDune {
     this.createSlope();
     this.createCurveLater();
     this.createRoughness();
+    this.extractMiddleLine();
 
     this.duneGeometry.normalsNeedUpdate = true;
     this.duneGeometry.verticesNeedUpdate = true;
@@ -245,6 +247,16 @@ export class SandDune {
       var vert = this.duneGeometry.vertices[i];
       var rz = Math.random() - 0.5;
       vert.z = vert.z + rz * AppSbParams.duneRoughness;
+    }
+  }
+
+  extractMiddleLine(): any {
+    var indexLen = this.duneGeometry.vertices.length;
+    for (var ih = 0; ih <= this.lengthSegments; ih++) {
+      var iw = this.widthSegments / 2;
+      var ivertex = indexLen - 1 - (iw + ih * (this.widthSegments + 1));
+      var vert = this.duneGeometry.vertices[ivertex];
+      SandDune.sandDuneCenterLine.push(vert);
     }
   }
 
