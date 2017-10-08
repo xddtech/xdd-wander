@@ -54,6 +54,10 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	this.SECTION_SAND = 1;
 	this.currentSection = this.SECTION_LAKE;
 
+	this.lakeSandSwitchZ = 2;
+	this.sandLakeSwitchY = 0.5;
+	this.maxClimbHeight = 34.5;
+
 	if ( this.domElement !== document ) {
 
 		this.domElement.setAttribute( 'tabindex', -1 );
@@ -72,6 +76,14 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	  var cameraV3 = new THREE.Vector3(cp.x, cp.y, cp.z);
 	  //this.targetDistance1 = cameraV3.distanceTo(this.target1);
 	  this.targetDistance1 = Math.abs(cp.x - this.target1.x);
+	}
+
+	this.sandDuneCenterLine = null;
+	this.sandDuneCenterNormal = null;
+	
+	this.setSandDuneParams = function(centerLine, centerNormal) {
+	  this.sandDuneCenterLine = centerLine;
+	  this.sandDuneCenterNormal = centerNormal;
 	}
 
 	this.handleResize = function () {
@@ -245,12 +257,14 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 				this.object.position.x = 0;
 			}
 
-			console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
-		                  ", " + this.object.position.z);
+			//console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
+		    //               ", " + this.object.position.z);
 
-			if(this.object.position.z < 1) {
+			if(this.object.position.z < this.lakeSandSwitchZ) {
 				this.currentSection = this.SECTION_SAND;
 				console.info("switch to sand section ");
+				console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
+		                   ", " + this.object.position.z);
 			}
 		}
 		if ( this.moveBackward || this.moveRight) {
@@ -341,31 +355,46 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	this.updateSandSection = function(delta) {
 		
 		var actualMoveSpeed = delta * this.climbSpeed;
+		var slope = this.getSandDuneSlope(this.object.position);
 
 		if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) {
+
 			var mzforw =  -(actualMoveSpeed + this.autoSpeedFactor);
 			var myforw = actualMoveSpeed;
-			this.object.translateY(myforw);
-			this.object.translateZ(mzforw);
-			if(this.object.position.y < 1) {
-				this.object.position.y = 1;
+			console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
+						   ", " + this.object.position.z + 
+						", slope=" + slope.x + ", " + slope.y + ", " + slope.z);
+			if (this.object.position.y < this.maxClimbHeight) {
+			  //mzforw = -mzforw * slope.z;
+			  //myforw = myforw * slope.y;
+			  this.object.translateY(myforw);
+			  this.object.translateZ(mzforw);
 			}
+			//if(this.object.position.y < 1) {
+			//	this.object.position.y = 1;
+			//}
 		}
 		if ( this.moveBackward || this.moveRight) {
 			var p0Clone = this.position0.clone();
 			p0Clone.sub(this.object.position);
 			p0Clone.normalize();
 
+			slope.negate();
+
 			var mxback = 0;
 			var myback = -actualMoveSpeed;
 			var mzback = actualMoveSpeed;
+			//myback = myback * slope.y;
+			//mzback = -mzback * slope.z;
 
 			this.object.translateX(mxback);
 			this.object.translateY(myback);
 			this.object.translateZ(mzback);
 
-			if(this.object.position.y < 1) {
+			if(this.object.position.y < this.sandLakeSwitchY) {
 				this.currentSection = this.SECTION_LAKE;
+			    console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
+		                   ", " + this.object.position.z);
 				console.info("switch to lake section ");
 			}
 
@@ -415,7 +444,28 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			z: tx
 		};
 		this.object.lookAt( targetPos );
+	}
 
+	this.getSandDuneSlope = function(position) {
+	  var lines = this.sandDuneCenterLine;
+	  var len = lines.length;
+	  var p1 = null;
+	  var p2 = null;
+	  var i = 0;
+	  for (i =0; i < (len-1); i++) {
+		  p1 = lines[i];
+		  p2 = lines[i+1];
+		  if (position.y >= p1.y && position.y <= p2.y &&
+			  position.z >= p1.z && position.z <= p2.z) {
+				break;
+		  }
+	  }
+      if (p1 === null || p2 === null) {
+		 return new THREE.Vector3(0, 0, -1);
+	  }
+	  var v = new THREE.Vector3(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+	  v.normalize();
+	  return v;
 	}
 
 

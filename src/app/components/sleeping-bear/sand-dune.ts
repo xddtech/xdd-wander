@@ -15,6 +15,7 @@ export class SandDune {
   lengthSegments = AppSbParams.duneLengthSegments;
   duneGeometry: THREE.PlaneGeometry;
   static sandDuneCenterLine: THREE.Vector3[] = new Array();
+  static sandDuneCenterNormal: THREE.Vector3[] = new Array();
 
   constructor(private wanderService: WanderService) {
   }
@@ -257,6 +258,12 @@ export class SandDune {
       var ivertex = indexLen - 1 - (iw + ih * (this.widthSegments + 1));
       var vert = this.duneGeometry.vertices[ivertex];
       SandDune.sandDuneCenterLine.push(vert);
+
+      var faceLength = this.duneGeometry.faces.length;
+      var iface = faceLength - (2 * iw + 2 * this.widthSegments * ih);
+      var face = this.duneGeometry.faces[iface];
+      //var normal = face.normal;
+      //SandDune.sandDuneCenterNormal.push(normal);
     }
   }
 

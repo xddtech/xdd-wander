@@ -38,6 +38,9 @@ export class SleepingBearShow {
     this.addShowObjects();
     this.addShowLights();
 
+    SleepingBearShow.sbearControl.setSandDuneParams(
+      SandDune.sandDuneCenterLine, SandDune.sandDuneCenterLine);
+
     SleepingBearShow_animate();
   }
 

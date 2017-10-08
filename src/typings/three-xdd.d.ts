@@ -6772,6 +6772,7 @@ declare namespace THREE {
 
         update(delta: number): void;
         init(): void;
+        setSandDuneParams(centerLine: any, centerNormal: any): void;
 
         constructor(camera: any, dom: any);
     }
