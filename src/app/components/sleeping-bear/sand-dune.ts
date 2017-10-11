@@ -74,6 +74,12 @@ export class SandDune {
     //duneMesh.rotation.x = 0;
     duneMesh.position.y = this.duneLength / 2;
     appScene.add(duneMesh);
+    
+    try {
+      this.createTexts(appScene);
+    } catch(error) {
+      console.error("sand-dune.ts: createTexts-" + error);
+    }
   }
 
   createCurve(): void {
@@ -106,8 +112,8 @@ export class SandDune {
   }
 
   createCurveLater(): void {
-    var depthTop = 20;
-    var depthBottom = 10;
+    var depthTop = 50;
+    var depthBottom = 30;
     var xcenter = 0;
     var zreduce = 0.5;
 
@@ -285,65 +291,37 @@ export class SandDune {
     return Math.abs(slope);
   }
 
-  /*
-  createOld(appScene: THREE.Scene) : void {
-    var width = 100;
-    var length = 100;
-    var widthSegments = 50;
-    var lengthSegments = 50;
-    var sandGeometry = new THREE.PlaneGeometry(width, length, widthSegments, lengthSegments);
-
-    var xmiddle = width / 2;
-    var r = 20;
-    var y0: number;
-    var ym = length / 2;
-    var len = sandGeometry.vertices.length;
-
-    for ( var i = len - 1; i >= 0; i -- ) {
-      var xyz = sandGeometry.vertices[i];
-      if (i === (len-1)) {
-        y0 = xyz.y;
-        console.info("sand-y0=" + y0);
-      }
-      var fy = 1 - (xyz.y - y0)/(ym - y0);
-      if (Math.abs(xyz.x) < r) {
-        var d = r - Math.sqrt(r*r - xyz.x * xyz.x);
-        var f = 1 + 2*d/r;
-        xyz.z = xyz.z + fy* d/f;
-      } else {
-        xyz.z = xyz.z + fy* r/3;
-      }
-      xyz.y = xyz.y + AppSbParams.beachHeight;
-      xyz.z = xyz.z - 50 * (1-fy);
-    }
-    
-    var loader = new THREE.TextureLoader();
-    var texture = loader.load("assets/textures/sand.png");
-    texture.wrapS = THREE.MirroredRepeatWrapping;
-    texture.wrapT = THREE.MirroredRepeatWrapping;
-    texture.repeat.set(2, 2);
-    texture.flipY = false;
-    //texture.anisotropy = 16;
-    var sandMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
-    //var sandMaterial = new THREE.MeshPhongMaterial( {map: texture } );
-    //sandMaterial.opacity = 0.8;
-    //sandMaterial.transparent = true;
-   
-    var meshParams = {
-      wireframe: true,
-      overdraw: 1,
-      color: 0x00ffff
+  createTexts(appScene: THREE.Scene): void {
+    //console.log(THREE.FontUtils.faces);
+    var options = <THREE.TextGeometryParameters> {
+      size: 90,
+      height: 90,
+      weight: "normal",
+      font: new THREE.Font("helvetiker"),
+      bevelThickness: 2,
+      bevelSize: 0.5,
+      bevelSegments: 3,
+      bevelEnabled: true,
+      curveSegments: 12,
+      steps: 1
     };
-    var sandMesh1 = THREE.SceneUtils.createMultiMaterialObject(sandGeometry,
-       [new THREE.MeshBasicMaterial(<THREE.MeshBasicMaterialParameters>meshParams),
-                sandMaterial
-          ]);
-    var sandMesh = THREE.SceneUtils.createMultiMaterialObject(sandGeometry,
-       [sandMaterial]);
-
-    sandMesh.rotation.x = -0.0 * Math.PI;
-    sandMesh.position.y = length / 2;
-    appScene.add(sandMesh);
+    //var fontName = "helvetiker";
+    //var fontWeight = "regular";
+    //var fontLoaded;
+    //var loader = new THREE.FontLoader();
+		//		loader.load( 'fonts/' + fontName + '_' + fontWeight + '.typeface.json', function ( response ) {
+		//			fontLoaded = response;
+		//		} );
+    var textGeom = new THREE.TextGeometry("Sleeping", options);
+    var meshMaterial = new THREE.MeshPhongMaterial({
+            specular: 0xffffff,
+            color: 0xeeffff,
+            shininess: 100
+         });
+    var text = THREE.SceneUtils.createMultiMaterialObject(textGeom, [meshMaterial]);
+    text.position.z = -30;
+    text.position.y = 30;
+    appScene.add(text);
   }
-  */
+
 }

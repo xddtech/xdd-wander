@@ -56,12 +56,10 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 	this.lakeSandSwitchZ = 2;
 	this.sandLakeSwitchY = 0.5;
-	this.maxClimbHeight = 34.5;
+	this.maxClimbHeight = 20;
 
 	if ( this.domElement !== document ) {
-
 		this.domElement.setAttribute( 'tabindex', -1 );
-
 	}
 
 	//
@@ -87,81 +85,53 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	}
 
 	this.handleResize = function () {
-
 		if ( this.domElement === document ) {
-
 			this.viewHalfX = window.innerWidth / 2;
 			this.viewHalfY = window.innerHeight / 2;
-
 		} else {
-
 			this.viewHalfX = this.domElement.offsetWidth / 2;
 			this.viewHalfY = this.domElement.offsetHeight / 2;
-
 		}
-
 	};
 
 	this.onMouseDown = function ( event ) {
-
 		if ( this.domElement !== document ) {
-
 			this.domElement.focus();
-
 		}
 
 		event.preventDefault();
 		event.stopPropagation();
 
 		if ( this.activeLook ) {
-
 			switch ( event.button ) {
-
-				case 0: this.moveForward = true; break;
+			    case 0: this.moveForward = true; break;
 				case 2: this.moveBackward = true; break;
-
 			}
 
 		}
-
 		this.mouseDragOn = true;
-
 	};
 
 	this.onMouseUp = function ( event ) {
-
 		event.preventDefault();
 		event.stopPropagation();
-
 		if ( this.activeLook ) {
-
 			switch ( event.button ) {
-
 				case 0: this.moveForward = false; break;
 				case 2: this.moveBackward = false; break;
-
 			}
-
 		}
-
 		this.mouseDragOn = false;
-
 	};
 
 	this.onMouseMove = function ( event ) {
-
 		if ( this.domElement === document ) {
-
 			this.mouseX = event.pageX - this.viewHalfX;
 			this.mouseY = event.pageY - this.viewHalfY;
-
 		} else {
-
 			this.mouseX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
 			this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
-
 		}
-
 	};
 
 	this.onKeyDown = function ( event ) {
@@ -169,7 +139,6 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 		//event.preventDefault();
 
 		switch ( event.keyCode ) {
-
 			case 38: /*up*/
 			case 87: /*W*/ this.moveForward = true; break;
 
@@ -186,15 +155,12 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			case 70: /*F*/ this.moveDown = true; break;
 
 			case 81: /*Q*/ this.freeze = !this.freeze; break;
-
 		}
-
 	};
 
 	this.onKeyUp = function ( event ) {
 
 		switch( event.keyCode ) {
-
 			case 38: /*up*/
 			case 87: /*W*/ this.moveForward = false; break;
 
@@ -209,17 +175,13 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 			case 82: /*R*/ this.moveUp = false; break;
 			case 70: /*F*/ this.moveDown = false; break;
-
 		}
-
 	};
 
 	this.update = function( delta ) {
 
 		if ( this.freeze ) {
-
 			return;
-
 		}
 		if (this.currentSection === this.SECTION_LAKE) {
 			this.updateLakeSection(delta);
@@ -231,16 +193,11 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	this.updateLakeSection = function(delta) {
 
 		if ( this.heightSpeed ) {
-
 			var y = THREE.Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
 			var heightDelta = y - this.heightMin;
-
 			this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
-
 		} else {
-
 			this.autoSpeedFactor = 0.0;
-
 		}
 
 		var actualMoveSpeed = delta * this.movementSpeed;
@@ -329,27 +286,30 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 		var targetPosition = this.target,
 			position = this.object.position;
 
-		//targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-		//targetPosition.y = position.y + 100 * Math.cos( this.phi );
-		//targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
-
-        var cp = this.object.position;
-	    var cameraV3 = new THREE.Vector3(cp.x, cp.y, cp.z);
-		//var dtarget1 = cameraV3.distanceTo(this.target1);
-		var dtarget1 = Math.abs(cp.x - this.target1.x);
-		var tf = dtarget1 / this.targetDistance1;
-		var tx = tf * this.target0.x + (1 - tf) * this.target1.x;
-		var ty = tf * this.target0.y + (1 - tf) * this.target1.y;
-		var tz = tf * this.target0.z + (1 - tf) * this.target1.z;
-		var targetPos = {
-			x: tx,
-			y: ty,
-			z: tx
-		};
-		this.object.lookAt( targetPos );
-
-		//this.object.lookAt( targetPosition );
-
+		//if (this.mouseDragOn) {
+		//	this.phi = THREE.Math.degToRad(90);
+		//	var lookAt = this.object.getWorldDirection();
+		//    targetPosition.x = lookAt.x + 10 * Math.sin( this.phi ) * Math.cos( this.theta );
+		//    targetPosition.y = lookAt.y + 10 * Math.cos( this.phi );
+		//    targetPosition.z = lookAt.z + 10 * Math.sin( this.phi ) * Math.sin( this.theta );
+		//    this.object.lookAt( targetPosition );
+		//} else 
+		{
+          var cp = this.object.position;
+	      var cameraV3 = new THREE.Vector3(cp.x, cp.y, cp.z);
+		  //var dtarget1 = cameraV3.distanceTo(this.target1);
+		  var dtarget1 = Math.abs(cp.x - this.target1.x);
+		  var tf = dtarget1 / this.targetDistance1;
+		  var tx = tf * this.target0.x + (1 - tf) * this.target1.x;
+		  var ty = tf * this.target0.y + (1 - tf) * this.target1.y;
+		  var tz = tf * this.target0.z + (1 - tf) * this.target1.z;
+		  var targetPos = {
+		  	x: tx,
+		  	y: ty,
+		  	z: tx
+		  };
+		  this.object.lookAt( targetPos );
+		}
 	};
 
 	this.updateSandSection = function(delta) {
@@ -374,7 +334,7 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			//	this.object.position.y = 1;
 			//}
 		}
-		if ( this.moveBackward || this.moveRight) {
+		if ( this.moveBackward ) {
 			var p0Clone = this.position0.clone();
 			p0Clone.sub(this.object.position);
 			p0Clone.normalize();
@@ -393,8 +353,8 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 			if(this.object.position.y < this.sandLakeSwitchY) {
 				this.currentSection = this.SECTION_LAKE;
-			    console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
-		                   ", " + this.object.position.z);
+			    //console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
+		        //           ", " + this.object.position.z);
 				console.info("switch to lake section ");
 			}
 
@@ -434,16 +394,34 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 		}
 
         var cp = this.object.position;
-	    
-		var tx = cp.x;
-		var ty = cp.y + 1;
-		var tz = cp.z + 1;
-		var targetPos = {
+		
+		if (this.moveLeft || this.moveRight) {
+		   var lookAt = this.object.getWorldDirection();
+		   var speed = 0.001;
+		   if (this.moveRight) {
+			   speed = -speed;
+		   }
+
+		   var tx = lookAt.x + 1 * Math.cos(speed);
+		   var ty = lookAt.y;
+		   var tz = lookAt.z + 1 * Math.sin( speed );
+		   console.log("lookAt=" + tx + ", " + ty + ", " + tz);
+		   this.object.lookAt( {
+			   x: tx,
+			   y: ty,
+			   z: tz
+			});
+		} else {
+		  var tx = cp.x;
+		  var ty = cp.y + 1;
+		  var tz = cp.z + 1;
+		  var targetPos = {
 			x: tx,
 			y: ty,
 			z: tx
-		};
-		this.object.lookAt( targetPos );
+		  };
+		  this.object.lookAt( targetPos );
+		}
 	}
 
 	this.getSandDuneSlope = function(position) {
