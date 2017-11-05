@@ -292,6 +292,38 @@ export class SandDune {
   }
 
   createTexts(appScene: THREE.Scene): void {
+    var loader = new THREE.FontLoader();
+    loader.load( 'assets/fonts/helvetiker_regular.typeface.json', function ( response ) {
+      var font = <any>response;
+      var options = <THREE.TextGeometryParameters> {
+        size: 5,
+        height: 5,
+        weight: "normal",
+        font: font,
+        bevelThickness: 2,
+        bevelSize: 0.5,
+        bevelSegments: 3,
+        bevelEnabled: true,
+        curveSegments: 12,
+        steps: 1
+      };
+      var textGeom = new THREE.TextGeometry("Sleeping Bear", options);
+      
+      var meshMaterial = new THREE.MeshPhongMaterial({
+              specular: 0xffffff,
+              color: 0x88aaee,
+              shininess: 100
+           });
+      var text = THREE.SceneUtils.createMultiMaterialObject(textGeom, [meshMaterial]);
+      text.position.z = -60;
+      text.position.y = 50;
+      text.position.x = -20;
+      appScene.add(text);
+
+    } );
+  }
+
+  createTextsOld(appScene: THREE.Scene): void {
     //console.log(THREE.FontUtils.faces);
     var options = <THREE.TextGeometryParameters> {
       size: 90,
@@ -313,6 +345,7 @@ export class SandDune {
 		//			fontLoaded = response;
 		//		} );
     var textGeom = new THREE.TextGeometry("Sleeping", options);
+
     var meshMaterial = new THREE.MeshPhongMaterial({
             specular: 0xffffff,
             color: 0xeeffff,
