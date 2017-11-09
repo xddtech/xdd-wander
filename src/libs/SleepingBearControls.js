@@ -81,6 +81,9 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	  var cameraV3 = new THREE.Vector3(cp.x, cp.y, cp.z);
 	  //this.targetDistance1 = cameraV3.distanceTo(this.target1);
 	  this.targetDistance1 = Math.abs(cp.x - this.target1.x);
+
+	  $( "#duneClimbInfo" ).hide();
+	  $( "#climbTopWelcome").hide();
 	}
 
 	this.sandDuneCenterLine = null;
@@ -233,6 +236,7 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 				this.duneLookAt.y = this.object.position.y + 1;
 				this.duneLookAt.z = this.object.position.z + 1;
 				this.duneLookAngle = 0;
+				$( "#duneClimbInfo" ).show(1000);
 			}
 		}
 		if ( this.moveBackward || this.moveRight) {
@@ -344,6 +348,9 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			//if(this.object.position.y < 1) {
 			//	this.object.position.y = 1;
 			//}
+			if (this.object.position.y >= this.maxClimbHeight) {
+				$( "#climbTopWelcome" ).show();
+			}
 		}
 		if ( this.moveBackward ) {
 			var p0Clone = this.position0.clone();
@@ -367,6 +374,8 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			    //console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
 		        //           ", " + this.object.position.z);
 				console.info("switch to lake section ");
+				$( "#duneClimbInfo" ).hide();
+				$( "#climbTopWelcome" ).hide();
 			}
 
 		}
