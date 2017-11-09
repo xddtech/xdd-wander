@@ -58,6 +58,13 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	this.sandLakeSwitchY = 0.5;
 	this.maxClimbHeight = 20;
 
+	this.duneLookAngle = 0;
+	this.duneLookAt = {
+		x: 0,
+		y: 0,
+		z: 0
+	};
+
 	if ( this.domElement !== document ) {
 		this.domElement.setAttribute( 'tabindex', -1 );
 	}
@@ -221,7 +228,11 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 				this.currentSection = this.SECTION_SAND;
 				console.info("switch to sand section ");
 				console.info("lake x,y,z = " + this.object.position.x + ", " + this.object.position.y +
-		                   ", " + this.object.position.z);
+						   ", " + this.object.position.z);
+				this.duneLookAt.x = this.object.position.x;
+				this.duneLookAt.y = this.object.position.y + 1;
+				this.duneLookAt.z = this.object.position.z + 1;
+				this.duneLookAngle = 0;
 			}
 		}
 		if ( this.moveBackward || this.moveRight) {
@@ -393,25 +404,44 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 		}
 
-        var cp = this.object.position;
+		var cp = this.object.position;
+		var turnSpeed = 0.01;
 		
 		if (this.moveLeft || this.moveRight) {
 		   var lookAt = this.object.getWorldDirection();
-		   var speed = 0.001;
+		   var speed = -turnSpeed;
 		   if (this.moveRight) {
-			   speed = -speed;
+			   speed = turnSpeed;
+		   }
+		   var pi = 3.14159;
+		   var pi2 = 2 * pi;
+		   this.duneLookAngle += speed;
+		   if (this.duneLookAngle > pi2) {
+			   this.duneLookAngle -= pi2;
+		   }
+		   if (this.duneLookAngle < -pi2) {
+			   this.duneLookAngle += pi2;
 		   }
 
-		   var tx = lookAt.x + 1 * Math.cos(speed);
-		   var ty = lookAt.y;
-		   var tz = lookAt.z + 1 * Math.sin( speed );
-		   console.log("lookAt=" + tx + ", " + ty + ", " + tz);
-		   this.object.lookAt( {
-			   x: tx,
-			   y: ty,
-			   z: tz
-			});
-		} else {
+			var tx = cp.x + Math.sin(this.duneLookAngle);
+			var ty = cp.y + 1;
+			var tz = cp.z + Math.cos(this.duneLookAngle);
+			console.log("duneLookAt " + tx + ", " + ty + ", " + tz + ", " + this.duneLookAngle);
+			//this.object.lookAt( {
+			//	x: tx,
+			//	y: ty,
+			//	z: tz
+			// });
+
+			var cos = Math.cos(this.duneLookAngle);
+			var cos2 = cos*cos;
+			var angf = Math.abs(Math.abs(this.duneLookAngle) - pi)/pi;
+			var looky = angf - (1-angf)*0.55;
+			this.duneLookAt.x = cp.x + Math.sin(this.duneLookAngle);
+			this.duneLookAt.y = cp.y + looky;
+			this.duneLookAt.z = cp.z - Math.cos(this.duneLookAngle);
+			//this.object.lookAt(this.duneLookAt);
+		} else if (this.moveForward || this.moveBackward) {
 		  var tx = cp.x;
 		  var ty = cp.y + 1;
 		  var tz = cp.z + 1;
@@ -420,8 +450,30 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			y: ty,
 			z: tx
 		  };
-		  this.object.lookAt( targetPos );
+		  //this.object.lookAt( targetPos );
+
+		  var backSpeed = turnSpeed;
+		  if (this.duneLookAngle > 0 && this.duneLookAngle > backSpeed) {
+			this.duneLookAngle -= backSpeed;
+		  }
+		  if (this.duneLookAngle < 0 && this.duneLookAngle < -backSpeed) {
+			this.duneLookAngle += backSpeed;
+		  }
+		 
+		  this.duneLookAt.x = cp.x + Math.sin(this.duneLookAngle);
+		  this.duneLookAt.y = cp.y+ Math.cos(this.duneLookAngle);
+		  this.duneLookAt.z = cp.z - Math.cos(this.duneLookAngle);
+		  //this.object.lookAt(this.duneLookAt);
+		  //var tmp = {
+			// x: this.duneLookAt.x,
+			 //y: this.duneLookAt.y,
+			 //z: this.duneLookAt.z
+		  //};
+		  //console.log("tmp=" + tmp.x + ", " + tmp.y + ", " + tmp.z);
+		  //console.log("tar=" + targetPos.x + ", " + targetPos.y + ", " + targetPos.z);
+		  //this.object.lookAt(tmp);
 		}
+		this.object.lookAt(this.duneLookAt);
 	}
 
 	this.getSandDuneSlope = function(position) {
