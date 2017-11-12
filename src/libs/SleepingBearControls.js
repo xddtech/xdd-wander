@@ -33,6 +33,12 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 	this.mouseX = 0;
 	this.mouseY = 0;
+	this.prevMouseX = 0;
+	this.prevMouseY = 0;
+
+	this.touchX = 0;
+	this.touchY = 0;
+	this.touchMove = false;
 
 	this.lat = 0;
 	this.lon = 0;
@@ -120,6 +126,12 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 
 		}
 		this.mouseDragOn = true;
+		this.prevMouseX = event.pageX;
+		this.prevMouseY = event.pageY;
+		//this.moveBackward = false;
+		//this.moveForward = false;
+		//this.moveLeft = false;
+		//this.moveRight = false;
 	};
 
 	this.onMouseUp = function ( event ) {
@@ -131,7 +143,11 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 				case 2: this.moveBackward = false; break;
 			}
 		}
-		this.mouseDragOn = false;
+		//this.mouseDragOn = false;
+		//this.moveBackward = false;
+		//this.moveForward = false;
+		//this.moveLeft = false;
+		//this.moveRight = false;
 	};
 
 	this.onMouseMove = function ( event ) {
@@ -142,6 +158,29 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			this.mouseX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
 			this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
 		}
+		/*
+		this.moveLeft = false;
+		this.moveRight = false;
+		this.moveForward = false;
+		this.moveBackward = false;
+		if(this.mouseDragOn) {
+		    if (Math.abs(this.mouseX) >= Math.abs(this.mouseY)) {
+                if(this.mouseX > this.prevMouseX) {
+				    this.moveRight = true;
+			    } else {
+				    this.moveLeft = true;
+			    }
+		    } else {
+			    if (this.mouseY < this.prevMouseY) {
+				    this.moveForward = true;
+			    } else {
+				    this.moveBackward = true;
+			    }
+		    }
+		}
+		*/
+		this.prevMouseX = event.pageX;
+		this.prevMouseY = event.pageY;
 	};
 
 	this.onKeyDown = function ( event ) {
@@ -187,6 +226,51 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 			case 70: /*F*/ this.moveDown = false; break;
 		}
 	};
+
+	this.touchStart = function(event) {
+		var t = e.touches[0];
+		this.touchX = t.screenX; 
+		this.touchY = t.screenY;
+	}
+
+	this.touchMove = function(event) {
+		this.touchMove = true;
+		var t = e.touches[0];
+		var tx = t.screenX; 
+		var ty = t.screenY;
+		var dx = tx - this.touchX;
+		var dy = ty - this.touchY;
+		if (dx === 0 && dy ===0) {
+			this.moveLeft = false;
+			this.moveRight = false;
+			this.moveForward = false;
+			this.moveBackward = false;
+		}
+		else if( Math.abs(dx) > Math.abs(dy)) {
+            if(dx > 0) {
+				this.moveRight = true;
+			} else {
+				this.moveLeft = true;
+			}
+		} else {
+			if(dy > 0) {
+				this.moveBackward = true;
+			} else {
+				this.moveForward = true;
+			}
+		}
+
+		this.touchX = t.screenX; 
+		this.touchY = t.screenY;
+	}
+
+	this.touchEnd = function(event) {
+		this.touchMove = false;
+		this.moveLeft = false;
+		this.moveRight = false;
+		this.moveForward = false;
+		this.moveBackward = false;
+	}
 
 	this.update = function( delta ) {
 
@@ -515,6 +599,9 @@ THREE.SleepingBearControls = function ( object, domElement ) {
 	this.domElement.addEventListener( 'mouseup', bind( this, this.onMouseUp ), false );
 	this.domElement.addEventListener( 'keydown', bind( this, this.onKeyDown ), false );
 	this.domElement.addEventListener( 'keyup', bind( this, this.onKeyUp ), false );
+	this.domElement.addEventListener('touchstart', bind(this, this.touchStart), false);
+	this.domElement.addEventListener('touchmove', bind(this, this.touchMove), false);
+	this.domElement.addEventListener('touchend', bind(this, this.touchEnd), false);
 
 	function bind( scope, fn ) {
 
