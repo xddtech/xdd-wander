@@ -218,9 +218,9 @@ export class SandDune {
         var ivertexBase = indexLen - 1 - (iw + (ih - 1) * (this.widthSegments + 1));
         var vert = this.duneGeometry.vertices[ivertex];
 
-        if (ih === 1) {
-          console.log("vert: " + vert.x + ", " + vert.y + ", " + vert.z);
-        }
+        //if (ih === 1) {
+        //  console.log("vert: " + vert.x + ", " + vert.y + ", " + vert.z);
+        //}
 
         var vertBase = this.duneGeometry.vertices[ivertexBase];
         var slope = this.getSlope(section, iLength);

@@ -168,8 +168,8 @@ export class LakeMichigan {
           var ivertex = iw + ih * (AppSbParams.beachWidthSegments + 1);
           var vert = this.beachGeometry.vertices[ivertex];
           var iv = 0;
-          vert.z += 0.005 * Math.sin( iv / 5 + (elapsedTime + iv ) / 7 );
-          vert.y += 0.005 * Math.sin( iv / 5 + (elapsedTime + iv ) / 7 );
+          vert.z += 0.001 * Math.sin( iv / 5 + (elapsedTime + iv ) / 7 );
+          vert.y += 0.001 * Math.sin( iv / 5 + (elapsedTime + iv ) / 7 );
         }
       }
     }

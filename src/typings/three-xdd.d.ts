@@ -1697,6 +1697,9 @@ declare namespace THREE {
         eulerOrder: string;
         getChildByName(name: string): Object3D;
         translate(distance: number, axis: Vector3): Object3D;
+
+        //XDD
+        geometry: any;
     }
 
     export interface Intersection {

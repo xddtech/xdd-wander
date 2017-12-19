@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import NavbarComponent from './components/navbar/navbar';
 import FooterComponent from './components/footer/footer';
 import HomeComponent from './components/home/home';
+import VRComponent from './components/vr/vr';
 import AboutComponent from './components/about/about';
 import WanderLandComponent from './components/home/wander-land';
 import {WanderService} from './services/wander-service';
@@ -19,6 +20,7 @@ import {WanderService} from './services/wander-service';
     NavbarComponent,
     FooterComponent,
     HomeComponent,
+    VRComponent,
     AboutComponent,
     WanderLandComponent
   ],
@@ -29,6 +31,7 @@ import {WanderService} from './services/wander-service';
     ReactiveFormsModule,
     RouterModule.forRoot([
       {path: '',                    component: HomeComponent},
+      {path: 'vr',                  component: VRComponent},
       {path: 'about',               component: AboutComponent}
     ])
   ],
