@@ -4793,6 +4793,7 @@ declare namespace THREE {
          * XDD
          */
         setClearColorHex(): void;
+        vr: any;
 
         /**
          * parameters is an optional object with properties defining the renderer's behaviour. The constructor also accepts no parameters at all. In all cases, it will assume sane defaults when parameters are missing.
@@ -6792,6 +6793,14 @@ declare namespace THREE {
         staticMoving: boolean;
         dynamicDampingFactor: number;
 
+        update(): void;
+    }
+
+    //XDD
+    export class GearVRController extends Object3D {
+        constructor();
+
+        setHand(hand: any): void;
         update(): void;
     }
 }

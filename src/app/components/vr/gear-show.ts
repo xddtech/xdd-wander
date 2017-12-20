@@ -10,6 +10,7 @@ export class GearShow {
    static appCamera: THREE.PerspectiveCamera;
    static wanderService: WanderService;
    static showClock = new THREE.Clock();
+   static gearController: THREE.GearVRController;
 
    camBox: THREE.Object3D;
    static room: THREE.Mesh;
@@ -24,11 +25,22 @@ export class GearShow {
 
       this.addCameraAndControls();
 
+      /*
       var appRender = new THREE.WebGLRenderer({ antialias: true });
       GearShow.appRender = appRender;
       appRender.setClearColor(new THREE.Color(0xEE0000));
       GearShow.onWindowResize();
       showElement.appendChild(appRender.domElement);
+      */
+
+      var appRender = new THREE.WebGLRenderer( { antialias: true } );
+      GearShow.appRender = appRender;
+      appRender.setPixelRatio( window.devicePixelRatio );
+      //renderer.setSize( window.innerWidth, window.innerHeight );
+      GearShow.onWindowResize();
+      appRender.vr.enabled = true;
+      showElement.appendChild( appRender.domElement );
+      showElement.appendChild( WEBVR.createButton( appRender ) );
   
       window.addEventListener("resize", GearShow.onWindowResize);
 
@@ -36,10 +48,10 @@ export class GearShow {
 
       var info = document.createElement( 'div' );
       info.style.position = 'absolute';
-      info.style.top = '10px';
+      info.style.top = '50px';
       info.style.width = '100%';
       info.style.textAlign = 'center';
-      info.innerHTML = '<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - gear vr';
+      info.innerHTML = '<a href="http://threejs.org" target="_blank" rel="noopener">three.js - gear vr</a>';
       showElement.appendChild( info );
 
       GearShow.animate();
@@ -58,12 +70,25 @@ export class GearShow {
       var far = 10;
       var appCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
       GearShow.appCamera = appCamera;
+      /*
       appCamera.position.x = 5;
       appCamera.position.y = 5;
       appCamera.position.z = 5;
 
       var lookAt = new THREE.Vector3(0, 0, 0);
       appCamera.lookAt(lookAt);
+      */
+
+      this.camBox = new THREE.Object3D();
+      this.camBox.position.y = 1.8;
+      this.camBox.add( GearShow.appCamera );
+      GearShow.appScene.add( this.camBox );
+
+      var controller = new THREE.GearVRController();
+      GearShow.gearController = controller;
+      this.camBox.position.y = 1.8;
+      controller.setHand( 'right' );
+      this.camBox.add( controller );
    }
 
   getCameraAspect(): number {
@@ -75,11 +100,6 @@ export class GearShow {
   addShowObjects(): void {
       var axisHelper = new THREE.AxisHelper(200);
       GearShow.appScene.add(axisHelper);
-
-      this.camBox = new THREE.Object3D();
-      this.camBox.position.y = 1.8;
-      this.camBox.add( GearShow.appCamera );
-      GearShow.appScene.add( this.camBox );
 
       var room = new THREE.Mesh(
           new THREE.BoxGeometry( 6, 6, 6, 8, 8, 8 ),
@@ -122,6 +142,8 @@ export class GearShow {
       var deltaTime = GearShow.showClock.getDelta(),
           elapsedTime = GearShow.showClock.getElapsedTime() * 10;
 
+      GearShow.gearController.update();
+
       var room = GearShow.room;
       for ( var i = 0; i < room.children.length; i ++ ) {
          var cube = room.children[ i ];
@@ -139,6 +161,8 @@ export class GearShow {
             cube.userData.velocity.z = - cube.userData.velocity.z;
          }
          cube.rotation.x += 0.01 * deltaTime;
+         cube.rotation.z += 0.005;
+         //cube.position.x += 0.005;
       }
   
       if (GearShow.appRender != null) {
