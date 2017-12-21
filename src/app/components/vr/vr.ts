@@ -2,6 +2,7 @@ import {Component, ViewChild, ElementRef, AfterViewInit, OnDestroy} from '@angul
 
 import {WanderService} from '../../services/wander-service';
 import {GearShow} from './gear-show';
+import {CubeShow} from './cube-show';
 
 declare var $: JQueryStatic;
 
@@ -28,13 +29,30 @@ export default class VRComponent implements AfterViewInit, OnDestroy {
       if (getShowElement() != null) {
          console.log("VRComponent get showElement inside ngAfterViewInit");
       }
-      this.initGearShow();
+      //this.initGearShow();
+      this.initCubeShow();
    }
 
    ngOnDestroy() {
       // show scrollbar for other routes
       $("body").css("overflow", "auto");
    }
+
+   private initCubeShow(): void {
+    this.showElementReady().then( () => {
+       if (CubeShow.appRender == null) {
+          var cubeShow = new CubeShow(this.wanderService);
+          cubeShow.create(getShowElement());
+       } else {
+          getShowElement().appendChild(CubeShow.appRender.domElement);
+          console.log("load the existing cube show renderer");
+       }
+    } ).catch(
+       (error) => {
+          console.error("failed to init cube show: " + error);
+       }
+    );
+  }
 
    private initGearShow(): void {
       this.showElementReady().then( () => {
@@ -47,7 +65,7 @@ export default class VRComponent implements AfterViewInit, OnDestroy {
          }
       } ).catch(
          (error) => {
-            console.error("failed to init sleeping bear: " + error);
+            console.error("failed to init gear show: " + error);
          }
       );
     }
